@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistem Pembayaran Moka Kost - Kelola pembayaran kost dengan mudah dan transparan">
+    <title>Moka Kost — Sistem Pembayaran</title>
+    <link rel="icon" type="image/png" href="https://ik.imagekit.io/nunuibnu/logo/mokakost">
+    <link rel="apple-touch-icon" href="https://ik.imagekit.io/nunuibnu/logo/mokakost">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem("mokakos_theme") || "dark";
+                document.documentElement.setAttribute("data-theme", savedTheme);
+            } catch (e) { }
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- Animated background blobs -->
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <div class="logo-group">
+                <img src="https://ik.imagekit.io/nunuibnu/logo/mokakost" alt="Moka Kost Logo" class="logo-img">
+                <div>
+                    <h1 class="logo-text">Moka Kost</h1>
+                    <span class="logo-sub">Sistem Manajemen Kost</span>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="nav-tabs" id="mainNavTabs" aria-label="Navigasi Utama">
+                <button class="nav-tab active" id="navTabDashboard" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                    </svg>
+                    <span>Pembayaran</span>
+                </button>
+                <button class="nav-tab" id="navTabHistory" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span class="tab-label-desktop">Riwayat Pembayaran</span>
+                    <span class="tab-label-mobile">Riwayat</span>
+                </button>
+                <button class="nav-tab" id="navTabDirectory" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    <span class="tab-label-desktop">Data Penghuni & KTP</span>
+                    <span class="tab-label-mobile">Penghuni & KTP</span>
+                </button>
+            </nav>
+
+            <nav class="nav">
+                <span class="nav-date" id="currentDate"></span>
+                <button class="btn-create-invoice" id="btnCreateInvoice">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="12" y1="18" x2="12" y2="12" />
+                        <line x1="9" y1="15" x2="15" y2="15" />
+                    </svg>
+                    Buat Tagihan
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Stats (Dashboard View) -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-title-wrap">
+                <h2 class="hero-title">Dashboard Pembayaran</h2>
+                <p class="hero-subtitle">Kelola status pembayaran sewa kost bulanan</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card" id="statTotal">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value">6</span>
+                        <span class="stat-label">Total Penghuni</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--success" id="statPaid">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="paidCount">0</span>
+                        <span class="stat-label">Sudah Bayar</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--warning" id="statUnpaid">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="unpaidCount">0</span>
+                        <span class="stat-label">Belum Bayar</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--info" id="statRevenue">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="totalRevenue">Rp 0</span>
+                        <span class="stat-label">Total Pemasukan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Bar (Dashboard View) -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-bar" id="filterBar">
+                <button class="filter-btn active" data-filter="all" id="filterAll">
+                    <span class="filter-dot"></span> Semua
+                </button>
+                <button class="filter-btn" data-filter="paid" id="filterPaid">
+                    <span class="filter-dot dot-paid"></span> Lunas
+                </button>
+                <button class="filter-btn" data-filter="unpaid" id="filterUnpaid">
+                    <span class="filter-dot dot-unpaid"></span> Belum Bayar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resident Payment Cards Section -->
+    <section class="residents-section" id="residentsSection">
+        <div class="container">
+            <div class="residents-grid" id="residentsGrid">
+                <!-- Cards will be injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Riwayat Pembayaran Section -->
+    <section class="history-section" id="historySection" style="display: none;">
+        <div class="container">
+            <!-- History Header -->
+            <div class="history-header-wrap">
+                <div>
+                    <h2 class="history-title">Riwayat Pembayaran & Transaksi</h2>
+                    <p class="history-subtitle">Log lengkap bukti pembayaran dan rekapan pemasukan sewa kost</p>
+                </div>
+                <div class="history-header-actions">
+                    <button class="btn btn-print" id="btnPrintHistoryReport" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9" />
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <rect x="6" y="14" width="12" height="8" />
+                        </svg>
+                        Cetak Laporan
+                    </button>
+                    <button class="btn-create-invoice" id="btnExportHistoryCSV" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export CSV (Excel)
+                    </button>
+                </div>
+            </div>
+
+            <!-- History Stats Grid -->
+            <div class="history-stats-grid">
+                <div class="hist-stat-card">
+                    <div class="hist-stat-icon hist-stat-icon--primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                    </div>
+                    <div class="hist-stat-info">
+                        <span class="hist-stat-num" id="historyStatCount">0 Transaksi</span>
+                        <span class="hist-stat-lbl">Total Transaksi Lunas</span>
+                    </div>
+                </div>
+
+                <div class="hist-stat-card hist-stat-card--success">
+                    <div class="hist-stat-icon hist-stat-icon--success">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                    </div>
+                    <div class="hist-stat-info">
+                        <span class="hist-stat-num hist-stat-num--success" id="historyStatRevenue">Rp 0</span>
+                        <span class="hist-stat-lbl">Total Dana Diterima</span>
+                    </div>
+                </div>
+
+                <div class="hist-stat-card">
+                    <div class="hist-stat-icon hist-stat-icon--info">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                    </div>
+                    <div class="hist-stat-info">
+                        <span class="hist-stat-num" id="historyStatAverage">Rp 0</span>
+                        <span class="hist-stat-lbl">Rata-rata Pembayaran</span>
+                    </div>
+                </div>
+
+                <div class="hist-stat-card">
+                    <div class="hist-stat-icon hist-stat-icon--warning">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                            <line x1="1" y1="10" x2="23" y2="10" />
+                        </svg>
+                    </div>
+                    <div class="hist-stat-info">
+                        <span class="hist-stat-num" id="historyStatMethod">Transfer BCA</span>
+                        <span class="hist-stat-lbl">Metode Terfavorit</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Toolbar -->
+            <div class="history-toolbar">
+                <div class="history-search-wrap">
+                    <svg viewBox="0 0 24 24" class="dir-search-icon" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="historySearchInput" class="history-search-input"
+                        placeholder="Cari nama penghuni, no. kamar, ID transaksi, no. WA, metode...">
+                </div>
+
+                <div class="history-filters-wrap">
+                    <div class="history-filter-item">
+                        <select class="history-filter-select" id="historyPeriodFilter">
+                            <option value="all">Semua Periode</option>
+                        </select>
+                    </div>
+
+                    <div class="history-filter-item">
+                        <select class="history-filter-select" id="historyMethodFilter">
+                            <option value="all">Semua Metode</option>
+                        </select>
+                    </div>
+
+                    <button class="history-tool-btn" id="btnHistorySort" data-sort="desc" title="Ubah urutan tanggal">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <polyline points="19 12 12 19 5 12" />
+                        </svg>
+                        <span class="sort-label">Terbaru</span>
+                    </button>
+
+                    <button class="history-tool-btn history-tool-btn--reset" id="btnHistoryReset" title="Reset filter">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6" />
+                            <path d="M1 20v-6h6" />
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="history-results-info" id="historyResultCount">Menampilkan catatan riwayat...</div>
+
+            <!-- History Table View (Desktop & Tablet) -->
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>No. Kuitansi</th>
+                            <th>Penghuni & Kamar</th>
+                            <th>Periode</th>
+                            <th>Nominal & Status</th>
+                            <th>Metode & Catatan</th>
+                            <th style="text-align: right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- History Rows Injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- History Cards View (Mobile) -->
+            <div class="history-cards-list" id="historyCardsList">
+                <!-- Mobile cards injected by JS -->
+            </div>
+
+            <!-- History Empty State -->
+            <div class="history-empty-state" id="historyEmptyState" style="display:none;">
+                <div class="history-empty-icon">🧾</div>
+                <h3>Tidak Ada Riwayat Pembayaran</h3>
+                <p>Belum ada catatan pembayaran yang sesuai dengan pencarian atau filter yang dipilih.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Penghuni Kost & KTP Section -->
+    <section class="directory-section" id="directorySection" style="display: none;">
+        <div class="container">
+            <!-- Directory Header -->
+            <div class="directory-header-wrap">
+                <div>
+                    <h2 class="directory-title">Data Penghuni Kost & KTP</h2>
+                    <p class="directory-subtitle">Kelola informasi penghuni, nomor kamar, kontak, dan dokumen KTP resmi
+                    </p>
+                </div>
+                <button class="btn-create-invoice" id="btnAddResident">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Tambah Penghuni
+                </button>
+            </div>
+
+            <!-- Directory Stats Summary -->
+            <div class="dir-stats-grid">
+                <div class="dir-stat-card">
+                    <div class="dir-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <div class="dir-stat-info">
+                        <span class="dir-stat-num" id="dirStatTotal">6</span>
+                        <span class="dir-stat-lbl">Total Penghuni</span>
+                    </div>
+                </div>
+                <div class="dir-stat-card dir-stat-card--success">
+                    <div class="dir-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="16" rx="3" />
+                            <circle cx="9" cy="10" r="2" />
+                            <line x1="15" y1="8" x2="17" y2="8" />
+                            <line x1="15" y1="12" x2="17" y2="12" />
+                            <path d="M7 16h10" />
+                        </svg>
+                    </div>
+                    <div class="dir-stat-info">
+                        <span class="dir-stat-num" id="dirStatWithKtp">0</span>
+                        <span class="dir-stat-lbl">KTP Terverifikasi</span>
+                    </div>
+                </div>
+                <div class="dir-stat-card dir-stat-card--warning">
+                    <div class="dir-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                    </div>
+                    <div class="dir-stat-info">
+                        <span class="dir-stat-num" id="dirStatWithoutKtp">6</span>
+                        <span class="dir-stat-lbl">Belum Upload KTP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar (Search & Filter Pills) -->
+            <div class="dir-toolbar">
+                <div class="dir-search-wrap">
+                    <svg viewBox="0 0 24 24" class="dir-search-icon" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="directorySearchInput" class="dir-search-input"
+                        placeholder="Cari nama penghuni, kamar, No. HP, atau NIK...">
+                </div>
+
+                <div class="ktp-filter-bar" id="ktpFilterBar">
+                    <button class="ktp-filter-btn active" data-ktp-filter="all">Semua</button>
+                    <button class="ktp-filter-btn" data-ktp-filter="has_ktp">
+                        <span class="filter-dot dot-paid"></span> KTP Terupload
+                    </button>
+                    <button class="ktp-filter-btn" data-ktp-filter="no_ktp">
+                        <span class="filter-dot dot-unpaid"></span> Belum Ada KTP
+                    </button>
+                </div>
+            </div>
+
+            <div class="dir-results-info" id="directoryResultCount">Menampilkan penghuni...</div>
+
+            <!-- Directory Grid -->
+            <div class="dir-grid" id="directoryGrid">
+                <!-- Cards will be injected by JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="dir-empty-state" id="directoryEmptyState" style="display:none;">
+                <div class="dir-empty-icon">👥</div>
+                <h3>Tidak Ada Data Penghuni</h3>
+                <p>Tidak ditemukan penghuni yang sesuai dengan pencarian atau filter.</p>
+                <button class="btn-create-invoice" id="btnAddResidentEmpty" style="margin-top:12px;">+ Tambah
+                    Penghuni</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Receipt Modal -->
+    <div class="modal-overlay" id="receiptModal">
+        <div class="modal" id="modalContent">
+            <button class="modal-close" id="modalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="receipt" id="receiptContent">
+                <!-- Receipt content injected by JS -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-print" id="btnPrint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                    </svg>
+                    Cetak Bukti
+                </button>
+                <button class="btn btn-wa" id="btnWaReceipt">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                    </svg>
+                    Kirim WA
+                </button>
+                <button class="btn btn-download" id="btnDownload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    Unduh Gambar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div class="modal-overlay" id="invoiceModal">
+        <div class="modal modal--wide">
+            <button class="modal-close" id="invoiceModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <!-- Step indicator -->
+            <div class="invoice-steps" id="invoiceSteps">
+                <div class="invoice-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <span>Isi Data</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="invoice-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <span>Preview</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Form -->
+            <div class="invoice-form-step" id="invoiceStep1">
+                <h3 class="invoice-modal-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="12" y1="18" x2="12" y2="12" />
+                        <line x1="9" y1="15" x2="15" y2="15" />
+                    </svg>
+                    Buat Tagihan Baru
+                </h3>
+
+                <form id="invoiceForm" autocomplete="off">
+                    <div class="form-group">
+                        <label class="form-label" for="invoiceResident">Pilih Penghuni</label>
+                        <select class="form-select" id="invoiceResident" required>
+                            <option value="" disabled selected>— Pilih penghuni —</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="invoicePeriod">Periode Tagihan</label>
+                            <select class="form-select" id="invoicePeriod" required>
+                                <option value="" disabled selected>— Pilih bulan —</option>
+                                <option value="Oktober 2026">Oktober 2026</option>
+                                <option value="November 2026">November 2026</option>
+                                <option value="Desember 2026">Desember 2026</option>
+                                <option value="Januari 2027">Januari 2027</option>
+                                <option value="Februari 2027">Februari 2027</option>
+                                <option value="Maret 2027">Maret 2027</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="invoiceDueDate">Jatuh Tempo</label>
+                            <input class="form-input" type="date" id="invoiceDueDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="invoiceAmount">Biaya Kost (Rp)</label>
+                            <input class="form-input" type="number" id="invoiceAmount" placeholder="1500000" required
+                                min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="invoiceExtra">Biaya Tambahan (Rp)</label>
+                            <input class="form-input" type="number" id="invoiceExtra" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="invoiceExtraNote">Keterangan Biaya Tambahan</label>
+                        <input class="form-input" type="text" id="invoiceExtraNote"
+                            placeholder="Contoh: Listrik, Air, dll">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="invoiceNotes">Catatan</label>
+                        <textarea class="form-textarea" id="invoiceNotes" rows="2"
+                            placeholder="Catatan tambahan (opsional)"></textarea>
+                    </div>
+
+                    <div class="form-total-preview" id="formTotalPreview">
+                        <span class="form-total-label">Total Tagihan</span>
+                        <span class="form-total-value" id="formTotalValue">Rp 0</span>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-print" id="btnCancelInvoice">Batal</button>
+                        <button type="submit" class="btn btn-download">Lanjut ke Preview →</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Preview -->
+            <div class="invoice-form-step" id="invoiceStep2" style="display:none;">
+                <div class="invoice-preview" id="invoicePreviewContent">
+                    <!-- Injected by JS -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-print" id="btnBackToForm">← Kembali</button>
+                    <button type="button" class="btn btn-download" id="btnSaveInvoice">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Simpan Tagihan
+                    </button>
+                    <button type="button" class="btn btn-wa" id="btnSaveAndWaInvoice"
+                        title="Bagikan berkas gambar tagihan ke WhatsApp atau aplikasi lain">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                        </svg>
+                        Simpan & Bagikan ke WA
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal">
+            <button class="modal-close" id="paymentModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="payment-modal-header">
+                <div class="payment-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="payment-modal-title">Konfirmasi Pembayaran</h3>
+                    <p class="payment-modal-sub">Catat pelunasan sewa kost penghuni</p>
+                </div>
+            </div>
+
+            <div class="payment-summary-box" id="paymentSummaryBox">
+                <!-- Injected by JS -->
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label class="form-label" for="paymentMethod">Metode Pembayaran</label>
+                    <select class="form-select" id="paymentMethod" required>
+                        <option value="Transfer BCA">Transfer BCA</option>
+                        <option value="Transfer Mandiri">Transfer Mandiri </option>
+                        <option value="Transfer BRI">Transfer BRI</option>
+                        <option value="GoPay">GoPay</option>
+                        <option value="OVO">OVO</option>
+                        <option value="DANA">DANA</option>
+                        <option value="QRIS Standar">QRIS</option>
+                        <option value="Tunai / Cash">Tunai / Cash</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="paymentDate">Tanggal Pembayaran</label>
+                    <input class="form-input" type="date" id="paymentDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="paymentNote">Catatan / No. Referensi (Opsional)</label>
+                    <input class="form-input" type="text" id="paymentNote"
+                        placeholder="Contoh: Ref BCA 981723 / Titip penjaga">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-print" id="btnCancelPayment">Batal</button>
+                    <button type="submit" class="btn btn-pay-confirm" id="btnConfirmPayment">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Konfirmasi Lunas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- KTP Upload Modal -->
+    <div class="modal-overlay" id="ktpUploadModal">
+        <div class="modal">
+            <button class="modal-close" id="ktpUploadModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="ktp-modal-header">
+                <div class="ktp-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="16" rx="3" />
+                        <circle cx="9" cy="10" r="2" />
+                        <line x1="15" y1="8" x2="17" y2="8" />
+                        <line x1="15" y1="12" x2="17" y2="12" />
+                        <path d="M7 16h10" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="ktp-modal-title">Upload KTP Penghuni</h3>
+                    <p class="ktp-modal-sub" id="ktpUploadResidentName">-</p>
+                    <span class="ktp-modal-room-tag" id="ktpUploadResidentRoom">-</span>
+                </div>
+            </div>
+
+            <form id="ktpUploadForm">
+                <div class="form-group">
+                    <label class="form-label" for="ktpNikInput">Nomor Induk Kependudukan (NIK)</label>
+                    <input type="text" class="form-input" id="ktpNikInput" placeholder="Contoh: 3201234567890001"
+                        maxlength="20">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Foto Dokumen KTP</label>
+
+                    <!-- Dropzone -->
+                    <div class="ktp-dropzone" id="ktpDropzone">
+                        <input type="file" id="ktpFileInput" accept="image/*" style="display:none;">
+                        <div class="dropzone-icon">
+                            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor"
+                                stroke-width="1.8">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                        </div>
+                        <div class="dropzone-text">
+                            <strong>Pilih atau Seret Foto KTP ke Sini</strong>
+                            <span>Mendukung file JPG, PNG, JPEG (Maks. 5MB)</span>
+                        </div>
+                        <button type="button" class="btn-browse-file">Pilih Berkas Foto</button>
+                    </div>
+
+                    <!-- Preview Container -->
+                    <div class="ktp-preview-box" id="ktpPreviewContainer" style="display:none;">
+                        <img src="" alt="Pratinjau KTP" class="ktp-preview-image" id="ktpPreviewImg">
+                        <div class="ktp-preview-actions">
+                            <button type="button" class="btn-preview-action" id="btnChangeKtpPhoto">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                                Ganti Foto
+                            </button>
+                            <button type="button" class="btn-preview-action btn-preview-action--danger"
+                                id="btnRemoveKtpPreview">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path
+                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-print" id="btnCancelKtpUpload">Batal</button>
+                    <button type="submit" class="btn btn-pay-confirm" id="btnSaveKtp">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Simpan KTP
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- KTP Lightbox Viewer Modal -->
+    <div class="modal-overlay" id="ktpViewerModal">
+        <div class="modal modal--wide modal--viewer">
+            <button class="modal-close" id="ktpViewerModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="ktp-viewer-header">
+                <div>
+                    <h3 class="ktp-viewer-title" id="ktpViewerTitle">Dokumen KTP</h3>
+                    <p class="ktp-viewer-sub" id="ktpViewerSubtitle">-</p>
+                </div>
+                <div class="ktp-viewer-meta">
+                    <span class="ktp-viewer-nik" id="ktpViewerNik">NIK: -</span>
+                    <span class="ktp-viewer-date" id="ktpViewerDate"></span>
+                </div>
+            </div>
+
+            <div class="ktp-viewer-img-wrap">
+                <img src="" alt="Dokumen KTP" id="ktpViewerImg" class="ktp-viewer-img">
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-print" id="btnViewerDownloadKtp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Unduh Foto KTP
+                </button>
+                <button type="button" class="btn btn-download" id="btnViewerChangeKtp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    Ganti Foto KTP
+                </button>
+                <button type="button" class="btn btn-print btn--danger" id="btnViewerDeleteKtp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                    Hapus KTP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tambah / Edit Penghuni Modal -->
+    <div class="modal-overlay" id="residentFormModal">
+        <div class="modal modal--wide">
+            <button class="modal-close" id="residentFormModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="payment-modal-header">
+                <div class="payment-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="payment-modal-title" id="residentFormTitle">Tambah Penghuni Baru</h3>
+                    <p class="payment-modal-sub" id="residentFormSubtitle">Daftarkan penghuni baru dan lengkapi berkas
+                        identitas KTP</p>
+                </div>
+            </div>
+
+            <form id="residentForm" autocomplete="off">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="residentFormName">Nama Lengkap Penghuni *</label>
+                        <input type="text" class="form-input" id="residentFormName"
+                            placeholder="Contoh: Muhammad Kholil" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="residentFormRoom">Kamar Kost *</label>
+                        <input type="text" class="form-input" id="residentFormRoom"
+                            placeholder="Contoh: Kamar 101 — Lantai 1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="residentFormPhone">No. Telepon / WhatsApp *</label>
+                        <input type="tel" class="form-input" id="residentFormPhone" placeholder="Contoh: 0812-3456-7890"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="residentFormNik">NIK (KTP)</label>
+                        <input type="text" class="form-input" id="residentFormNik"
+                            placeholder="Contoh: 3201234567890001" maxlength="20">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="residentFormAmount">Biaya Sewa Bulanan (Rp) *</label>
+                        <input type="number" class="form-input" id="residentFormAmount" placeholder="1500000" min="0"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="residentFormPeriod">Periode Awal</label>
+                        <select class="form-select" id="residentFormPeriod">
+                            <option value="Oktober 2026">Oktober 2026</option>
+                            <option value="November 2026">November 2026</option>
+                            <option value="Desember 2026">Desember 2026</option>
+                            <option value="Januari 2027">Januari 2027</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- KTP Upload Section inside resident form -->
+                <div class="form-group">
+                    <label class="form-label">Upload Foto KTP (Opsional)</label>
+                    <div class="ktp-dropzone" id="residentFormKtpDropzone">
+                        <input type="file" id="residentFormKtpFile" accept="image/*" style="display:none;">
+                        <div class="dropzone-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
+                                stroke-width="1.8">
+                                <rect x="3" y="4" width="18" height="16" rx="3" />
+                                <circle cx="9" cy="10" r="2" />
+                                <line x1="15" y1="8" x2="17" y2="8" />
+                                <line x1="15" y1="12" x2="17" y2="12" />
+                                <path d="M7 16h10" />
+                            </svg>
+                        </div>
+                        <div class="dropzone-text">
+                            <strong>Pilih atau Seret Foto KTP</strong>
+                            <span>JPG, PNG (Bisa diunggah nanti)</span>
+                        </div>
+                    </div>
+
+                    <div class="ktp-preview-box" id="residentFormKtpPreview" style="display:none; margin-top:10px;">
+                        <img src="" alt="Pratinjau KTP" class="ktp-preview-image" id="residentFormKtpPreviewImg">
+                        <div class="ktp-preview-actions">
+                            <button type="button" class="btn-preview-action btn-preview-action--danger"
+                                id="btnRemoveFormKtp">
+                                Hapus Foto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-print btn--danger" id="btnDeleteResident"
+                        style="display:none;">
+                        Hapus Penghuni
+                    </button>
+                    <button type="button" class="btn btn-print" id="btnCancelResidentForm">Batal</button>
+                    <button type="submit" class="btn btn-download">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Simpan Data Penghuni
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- WhatsApp Quick Send Modal -->
+    <div class="modal-overlay" id="waModal">
+        <div class="modal">
+            <button class="modal-close" id="waModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="wa-modal-header">
+                <div class="wa-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="wa-modal-title" id="waModalTitle">Kirim Pesan WhatsApp</h3>
+                    <p class="wa-modal-sub" id="waModalRecipient">Ke: -</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="waMessageText">Pesan WhatsApp</label>
+                <textarea class="form-textarea wa-textarea" id="waMessageText" rows="8"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-print" id="btnCopyWaText">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Salin Teks
+                </button>
+                <button type="button" class="btn btn-wa" id="btnConfirmSendWa">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                    </svg>
+                    Buka WhatsApp →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resident History Timeline Modal -->
+    <div class="modal-overlay" id="residentHistoryModal">
+        <div class="modal modal--wide">
+            <button class="modal-close" id="residentHistoryModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="res-hist-modal-header">
+                <div class="res-hist-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="payment-modal-title">Riwayat Pembayaran Penghuni</h3>
+                    <p class="payment-modal-sub" id="resHistName">-</p>
+                    <span class="ktp-modal-room-tag" id="resHistRoom">-</span>
+                </div>
+            </div>
+
+            <div class="res-hist-summary-row">
+                <div class="res-hist-summary-card">
+                    <span class="res-hist-sum-lbl">Total Dana Dibayarkan</span>
+                    <span class="res-hist-sum-val amount" id="resHistTotalSpent">Rp 0</span>
+                </div>
+                <div class="res-hist-summary-card">
+                    <span class="res-hist-sum-lbl">Frekuensi Pembayaran</span>
+                    <span class="res-hist-sum-val" id="resHistCount">0 Transaksi</span>
+                </div>
+            </div>
+
+            <div class="res-hist-timeline-wrap" id="resHistTimeline">
+                <!-- Timeline items injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <img src="logo.jpg" alt="Moka Kost" class="footer-logo">
+                <p>Moka Kost &copy; 2026. Semua hak dilindungi.</p>
+            </div>
+            <div class="footer-info">
+                <p>📍 Jl. Mulawarman IV RT 03 RW 01 Kramas, Kec.Tembalang, Kota Semarang</p>
+                <p>📞 0851-7545-0467</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- html2canvas Library for generating high-quality PNG Receipt Images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
