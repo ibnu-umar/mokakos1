@@ -4,6 +4,7 @@
 
 import { formatCurrency, formatDate } from "./formatters.js";
 import { showToast } from "./toast.js";
+import { KOST_INFO, rekeningHTML } from "../data/config.js";
 
 /**
  * Generates the unified, authentic HTML string for the receipt
@@ -71,7 +72,7 @@ export function createReceiptHTML(r) {
 
         <div style="text-align: center; font-size: 10.5px; color: #94a3b8; line-height: 1.5; margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
             Bukti pembayaran ini sah dan dikeluarkan secara digital.<br>
-            Moka Kost — Jl. Harmoni No. 12, Jakarta &bull; 📞 0812-3456-7890<br>
+            ${KOST_INFO.nama} — ${KOST_INFO.alamat} &bull; 📞 ${KOST_INFO.telepon}<br>
             Dicetak pada: ${formatDate(new Date().toISOString())}
         </div>
     `;
@@ -325,14 +326,13 @@ export function createInvoiceHTML(inv) {
 
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; font-size: 11.5px; color: #334155; line-height: 1.6; margin-top: 10px; text-align: left;">
             <div style="font-weight: 700; color: #0f172a; margin-bottom: 3px;">💳 Rekening Pembayaran:</div>
-            <div>• BCA: <strong>8830-123-456</strong> (a/n Moka Kost)</div>
-            <div>• Mandiri: <strong>137-00-1234567-8</strong> (a/n Moka Kost)</div>
+            ${rekeningHTML()}
             ${inv.notes ? `<div style="margin-top: 6px; font-style: italic; color: #64748b;"><strong>Catatan:</strong> ${inv.notes}</div>` : ''}
         </div>
 
         <div style="text-align: center; font-size: 10.5px; color: #94a3b8; line-height: 1.5; margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-            Surat tagihan ini diterbitkan secara digital oleh Moka Kost.<br>
-            Moka Kost — Jl. Harmoni No. 12, Jakarta &bull; 📞 0812-3456-7890<br>
+            Surat tagihan ini diterbitkan secara digital oleh ${KOST_INFO.nama}.<br>
+            ${KOST_INFO.nama} — ${KOST_INFO.alamat} &bull; 📞 ${KOST_INFO.telepon}<br>
             Diterbitkan pada: ${formatDate(new Date().toISOString())}
         </div>
     `;

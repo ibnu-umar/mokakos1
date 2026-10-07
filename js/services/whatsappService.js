@@ -5,6 +5,7 @@
 import { formatCurrency, formatDate, formatWhatsAppPhone } from "../utils/formatters.js";
 import { downloadReceiptImage, generateInvoiceImageFile } from "../utils/pdfGenerator.js";
 import { showToast } from "../utils/toast.js";
+import { KOST_INFO, rekeningWA } from "../data/config.js";
 
 /**
  * Direct 1-Click Send Receipt Image to WhatsApp
@@ -61,8 +62,7 @@ Mengingatkan untuk pembayaran sewa kamar Moka Kost:
 📊 *Status:* Menunggu Pembayaran
 
 💳 *Pembayaran via Transfer Bank:*
-• BCA: *8830-123-456* (a/n Moka Kost)
-• Mandiri: *137-00-1234567-8* (a/n Moka Kost)
+${rekeningWA()}
 
 Mohon konfirmasi dan kirimkan bukti transfer setelah melakukan pembayaran. Terima kasih banyak atas kerjasamanya! 🙏✨`;
 }
@@ -90,8 +90,8 @@ Pembayaran sewa kost Anda telah kami terima dengan rincian berikut:
 📊 *Status:* *LUNAS* ✅
 ----------------------------------------
 Berikut terlampir gambar struk resmi Bukti Pembayaran.
-Alamat: Jl. Harmoni No. 12, Jakarta
-Terima kasih dan semoga nyaman tinggal di Moka Kost! 🙏✨`;
+Alamat: ${KOST_INFO.alamat}
+Terima kasih dan semoga nyaman tinggal di ${KOST_INFO.nama}! 🙏✨`;
 }
 
 /**
@@ -122,8 +122,7 @@ ${extraText}----------------------------------------
 *TOTAL TAGIHAN: ${formatCurrency(inv.total)}*
 
 💳 *Rekening Pembayaran:*
-• BCA: *8830-123-456* (a/n Moka Kost)
-• Mandiri: *137-00-1234567-8* (a/n Moka Kost)
+${rekeningWA()}
 ${notesText}
 Mohon melakukan pembayaran sebelum tanggal jatuh tempo. Terima kasih! 🙏✨`;
 }

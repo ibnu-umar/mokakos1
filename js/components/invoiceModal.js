@@ -6,6 +6,7 @@ import { store } from "../state/store.js";
 import { formatCurrency, formatDate } from "../utils/formatters.js";
 import { showToast } from "../utils/toast.js";
 import { shareInvoiceFileCommon } from "../services/whatsappService.js";
+import { KOST_INFO } from "../data/config.js";
 
 let currentInvoiceData = null;
 
@@ -195,9 +196,9 @@ function generateInvoicePreview() {
         ` : ''}
 
         <div class="invoice-preview-footer">
-            Tagihan ini dikeluarkan secara digital oleh Moka Kost.<br>
+            Tagihan ini dikeluarkan secara digital oleh ${KOST_INFO.nama}.<br>
             Mohon melakukan pembayaran sebelum tanggal jatuh tempo.<br>
-            Moka Kost — Jl. Harmoni No. 12, Jakarta
+            ${KOST_INFO.nama} — ${KOST_INFO.alamat}
         </div>
     `;
 }
