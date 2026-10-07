@@ -25,8 +25,8 @@ export const KOST_INFO = {
 // ─── REKENING PEMBAYARAN ────────────────────────────────
 // Ditampilkan di struk, tagihan, dan pesan WhatsApp
 export const REKENING = [
-    { bank: "BCA",     noRek: "8830-123-456",      atasNama: "Moka Kost" },
-    { bank: "Mandiri", noRek: "137-00-1234567-8",   atasNama: "Moka Kost" },
+    { bank: "BCA", noRek: "8830-123-456", atasNama: "Moka Kost" },
+    { bank: "Mandiri", noRek: "137-00-1234567-8", atasNama: "Moka Kost" },
 ];
 
 
@@ -49,12 +49,12 @@ export const PENGHUNI = [
         paidDate: "2026-10-02",
         method: "Transfer BCA",
         status: "paid",
-        avatar: "AF"
+        avatar: "MK"
     },
     {
         id: "MK-2026-002",
-        name: "Budi Setiawan",
-        room: "Kamar 102 — Lantai 1",
+        name: "valen",
+        room: "Kamar 01",
         phone: "0813-3333-4444",
         amount: 1500000,
         period: "Oktober 2026",
@@ -62,12 +62,12 @@ export const PENGHUNI = [
         paidDate: "2026-10-03",
         method: "Transfer Mandiri",
         status: "paid",
-        avatar: "BS"
+        avatar: "VL"
     },
     {
         id: "MK-2026-003",
-        name: "Citra Dewi",
-        room: "Kamar 201 — Lantai 2",
+        name: "Dewi",
+        room: "Kamar 02",
         phone: "0857-5555-6666",
         amount: 1700000,
         period: "Oktober 2026",
@@ -75,12 +75,12 @@ export const PENGHUNI = [
         paidDate: "2026-10-01",
         method: "GoPay",
         status: "paid",
-        avatar: "CD"
+        avatar: "DW"
     },
     {
         id: "MK-2026-004",
-        name: "Dimas Prasetyo",
-        room: "Kamar 202 — Lantai 2",
+        name: "Dimas",
+        room: "Kamar 03",
         phone: "0878-7777-8888",
         amount: 1700000,
         period: "Oktober 2026",
@@ -88,12 +88,12 @@ export const PENGHUNI = [
         paidDate: null,
         method: null,
         status: "unpaid",
-        avatar: "DP"
+        avatar: "DM"
     },
     {
         id: "MK-2026-005",
-        name: "Eka Putri Lestari",
-        room: "Kamar 301 — Lantai 3",
+        name: "Eka",
+        room: "Kamar 05",
         phone: "0821-9999-0000",
         amount: 1800000,
         period: "Oktober 2026",
@@ -101,12 +101,12 @@ export const PENGHUNI = [
         paidDate: "2026-09-30",
         method: "Transfer BRI",
         status: "paid",
-        avatar: "EP"
+        avatar: "EK"
     },
     {
         id: "MK-2026-006",
-        name: "Farhan Maulana",
-        room: "Kamar 302 — Lantai 3",
+        name: "Maulana",
+        room: "Kamar 06",
         phone: "0856-1234-5678",
         amount: 1800000,
         period: "Oktober 2026",
@@ -114,7 +114,7 @@ export const PENGHUNI = [
         paidDate: null,
         method: null,
         status: "unpaid",
-        avatar: "FM"
+        avatar: "ML"
     }
 ];
 
@@ -137,15 +137,15 @@ export const RIWAYAT_PEMBAYARAN = [
         method: "Transfer BCA",
         notes: "Lunas sewa kamar bulan Oktober 2026",
         status: "paid",
-        avatar: "AF",
+        avatar: "MK",
         createdAt: "2026-10-02T09:15:00.000Z"
     },
     {
         id: "TRX-202610-002",
         receiptNo: "MK-2026-002",
         residentId: "MK-2026-002",
-        name: "Budi Setiawan",
-        room: "Kamar 102 — Lantai 1",
+        name: "valen",
+        room: "Kamar 01",
         phone: "0813-3333-4444",
         amount: 1500000,
         period: "Oktober 2026",
@@ -154,15 +154,15 @@ export const RIWAYAT_PEMBAYARAN = [
         method: "Transfer Mandiri",
         notes: "Ref Mandiri #998231",
         status: "paid",
-        avatar: "BS",
+        avatar: "VL",
         createdAt: "2026-10-03T14:20:00.000Z"
     },
     {
         id: "TRX-202610-003",
         receiptNo: "MK-2026-003",
         residentId: "MK-2026-003",
-        name: "Citra Dewi",
-        room: "Kamar 201 — Lantai 2",
+        name: "Dewi",
+        room: "Kamar 02",
         phone: "0857-5555-6666",
         amount: 1700000,
         period: "Oktober 2026",
@@ -171,15 +171,15 @@ export const RIWAYAT_PEMBAYARAN = [
         method: "GoPay",
         notes: "Pembayaran via GoPay e-wallet",
         status: "paid",
-        avatar: "CD",
+        avatar: "DW",
         createdAt: "2026-10-01T11:05:00.000Z"
     },
     {
         id: "TRX-202610-005",
         receiptNo: "MK-2026-005",
         residentId: "MK-2026-005",
-        name: "Eka Putri Lestari",
-        room: "Kamar 301 — Lantai 3",
+        name: "Eka",
+        room: "Kamar 05",
         phone: "0821-9999-0000",
         amount: 1800000,
         period: "Oktober 2026",
@@ -188,7 +188,7 @@ export const RIWAYAT_PEMBAYARAN = [
         method: "Transfer BRI",
         notes: "Transfer via BRImo",
         status: "paid",
-        avatar: "EP",
+        avatar: "EK",
         createdAt: "2026-09-30T16:45:00.000Z"
     }
 ];

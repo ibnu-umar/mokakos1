@@ -27,7 +27,8 @@ class Store {
     }
 
     /**
-     * Load residents from localStorage or fallback to initial data
+     * Load residents from localStorage and smart-sync with config.js
+     * (ensures edits in config.js immediately reflect in the app)
      */
     loadResidents() {
         try {
@@ -35,7 +36,36 @@ class Store {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    return parsed;
+                    const configMap = new Map(initialResidents.map(r => [r.id, r]));
+                    
+                    const merged = parsed.map(savedItem => {
+                        const configItem = configMap.get(savedItem.id);
+                        if (configItem) {
+                            configMap.delete(savedItem.id);
+                            return {
+                                ...savedItem,
+                                name: configItem.name,
+                                room: configItem.room,
+                                phone: configItem.phone,
+                                amount: configItem.amount,
+                                period: configItem.period,
+                                dueDate: configItem.dueDate,
+                                avatar: configItem.avatar || savedItem.avatar,
+                                ...(savedItem.status === configItem.status ? {
+                                    paidDate: configItem.paidDate,
+                                    method: configItem.method
+                                } : {})
+                            };
+                        }
+                        return savedItem;
+                    });
+
+                    // Append any new residents added to config.js
+                    for (const [, newConfigItem] of configMap) {
+                        merged.push({ ...newConfigItem });
+                    }
+
+                    return merged;
                 }
             }
         } catch (e) {
@@ -56,7 +86,7 @@ class Store {
     }
 
     /**
-     * Load payment history from localStorage or fallback to initial data
+     * Load payment history from localStorage and sync with config.js
      */
     loadPaymentHistory() {
         try {
@@ -64,7 +94,24 @@ class Store {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed)) {
-                    return parsed;
+                    const configMap = new Map(initialPaymentHistory.map(p => [p.id, p]));
+                    const merged = parsed.map(item => {
+                        const configItem = configMap.get(item.id);
+                        if (configItem) {
+                            return {
+                                ...item,
+                                name: configItem.name,
+                                room: configItem.room,
+                                phone: configItem.phone,
+                                amount: configItem.amount,
+                                period: configItem.period,
+                                dueDate: configItem.dueDate,
+                                avatar: configItem.avatar || item.avatar
+                            };
+                        }
+                        return item;
+                    });
+                    return merged;
                 }
             }
         } catch (e) {
@@ -82,6 +129,17 @@ class Store {
         } catch (e) {
             console.error("Failed to save payment history to localStorage:", e);
         }
+    }
+
+    /**
+     * Hard reset data to initial config values
+     */
+    resetToDefault() {
+        this.residents = [...initialResidents];
+        this.paymentHistory = [...initialPaymentHistory];
+        this.saveResidents();
+        this.savePaymentHistory();
+        this.notify();
     }
 
     /**
