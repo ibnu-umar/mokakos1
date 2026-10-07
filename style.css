@@ -496,11 +496,13 @@ body {
     background: var(--clr-surface);
     border: 1px solid var(--clr-border);
     border-radius: var(--radius-lg);
-    padding: 28px;
+    padding: 24px;
     transition: var(--transition);
     position: relative;
     overflow: hidden;
     animation: cardIn 0.5s ease-out backwards;
+    display: flex;
+    flex-direction: column;
 }
 
 .resident-card:nth-child(1) { animation-delay: 0.05s; }
@@ -640,26 +642,58 @@ body {
 }
 
 .card-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
+    margin-top: auto;
+    width: 100%;
 }
 
-.card-actions--paid {
-    grid-template-columns: 1fr 1fr;
+.card-actions-paid-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
 }
 
-.card-actions--unpaid {
-    grid-template-columns: 1fr 1fr;
+.card-actions-paid-row .btn-receipt {
+    flex: 1;
+}
+
+.card-actions-paid-row .btn-card-wa {
+    flex: 1;
+}
+
+.card-actions-primary-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.card-actions-primary-row .btn-card-pay {
+    flex: 1;
+}
+
+.card-actions-secondary-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.card-actions-secondary-row .btn-card-reminder,
+.card-actions-secondary-row .btn-card-invoice {
+    flex: 1;
 }
 
 .btn-receipt {
-    flex: 1;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     padding: 10px 14px;
+    min-height: 40px;
     border: none;
     border-radius: var(--radius-md);
     font-family: var(--font);
@@ -676,11 +710,13 @@ body {
 .btn-receipt:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 24px var(--clr-brand-glow);
+    filter: brightness(1.06);
 }
 
 .btn-receipt svg {
     width: 15px;
     height: 15px;
+    flex-shrink: 0;
 }
 
 .btn-receipt:disabled {
@@ -695,11 +731,12 @@ body {
 }
 
 .btn-card-wa {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     padding: 10px 14px;
+    min-height: 40px;
     border: 1px solid rgba(37, 211, 102, 0.25);
     border-radius: var(--radius-md);
     font-family: var(--font);
@@ -722,19 +759,20 @@ body {
 .btn-card-wa svg {
     width: 15px;
     height: 15px;
+    flex-shrink: 0;
 }
 
 .btn-card-pay {
-    grid-column: 1 / -1;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 12px 14px;
+    padding: 10px 14px;
+    min-height: 40px;
     border: none;
     border-radius: var(--radius-md);
     font-family: var(--font);
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
@@ -753,18 +791,20 @@ body {
 .btn-card-pay svg {
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
 }
 
 .btn-card-reminder {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 10px 14px;
+    padding: 10px 12px;
+    min-height: 40px;
     border: none;
     border-radius: var(--radius-md);
     font-family: var(--font);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
@@ -783,11 +823,72 @@ body {
 .btn-card-reminder svg {
     width: 15px;
     height: 15px;
+    flex-shrink: 0;
 }
 
-/* Invoice/tagihan button in unpaid card - inherit btn-card-wa but with adjusted layout */
-.card-actions .btn-card-wa {
-    /* inherits from existing .btn-card-wa styles */
+.btn-card-invoice {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    min-height: 40px;
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--clr-surface-2);
+    color: var(--clr-text);
+    white-space: nowrap;
+}
+
+.btn-card-invoice:hover {
+    background: var(--clr-surface-3);
+    color: var(--clr-brand-light);
+    border-color: var(--clr-border-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-card-invoice svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+.btn-card-hist {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--clr-border);
+    background: var(--clr-surface-2);
+    color: var(--clr-text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.btn-card-hist:hover {
+    background: var(--clr-surface-3);
+    color: var(--clr-brand-light);
+    border-color: var(--clr-brand-glow);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-card-hist svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
 }
 
 /* --- Modal --- */
@@ -3997,32 +4098,7 @@ html.theme-transitioning *::after {
     border-color: rgba(239, 100, 97, 0.3);
 }
 
-/* Card button on Dashboard/Resident Grid */
-.btn-card-hist {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--clr-border);
-    background: var(--clr-surface-2);
-    color: var(--clr-text-muted);
-    cursor: pointer;
-    transition: var(--transition);
-}
 
-.btn-card-hist svg {
-    width: 16px;
-    height: 16px;
-}
-
-.btn-card-hist:hover {
-    background: var(--clr-surface-3);
-    color: var(--clr-brand-light);
-    border-color: var(--clr-brand-light);
-    transform: scale(1.05);
-}
 
 /* --- History Mobile Cards List --- */
 .history-cards-list {

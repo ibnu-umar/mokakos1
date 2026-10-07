@@ -17,7 +17,7 @@ export const initialPaymentHistory = [
         method: "Transfer BCA",
         notes: "Lunas sewa kamar bulan Oktober 2026",
         status: "paid",
-        avatar: "AF",
+        avatar: "MK",
         createdAt: "2026-10-02T09:15:00.000Z"
     },
     {
@@ -25,7 +25,7 @@ export const initialPaymentHistory = [
         receiptNo: "MK-2026-002",
         residentId: "MK-2026-002",
         name: "Budi Setiawan",
-        room: "Kamar 102 — Lantai 1",
+        room: "Kamar 102",
         phone: "0813-3333-4444",
         amount: 1500000,
         period: "Oktober 2026",
