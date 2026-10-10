@@ -9,47 +9,8 @@ import { formatDate } from "../utils/formatters.js";
 let currentKtpResidentId = null;
 let currentKtpBase64 = null;
 
-/**
- * Compress and convert image file to Base64 data URL
- * @param {File} file 
- * @param {number} maxWidth 
- * @param {number} quality 
- * @returns {Promise<string>}
- */
-export function compressImageToBase64(file, maxWidth = 1000, quality = 0.82) {
-    return new Promise((resolve, reject) => {
-        if (!file || !file.type.startsWith("image/")) {
-            return reject(new Error("Berkas harus berupa gambar"));
-        }
-
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const elem = document.createElement("canvas");
-                let width = img.width;
-                let height = img.height;
-
-                if (width > maxWidth) {
-                    height = Math.round((height * maxWidth) / width);
-                    width = maxWidth;
-                }
-
-                elem.width = width;
-                elem.height = height;
-                const ctx = elem.getContext("2d");
-                ctx.drawImage(img, 0, 0, width, height);
-
-                const dataUrl = elem.toDataURL("image/jpeg", quality);
-                resolve(dataUrl);
-            };
-            img.onerror = (err) => reject(err);
-        };
-        reader.onerror = (err) => reject(err);
-    });
-}
+import { compressImageToBase64 } from "../utils/imageCompressor.js";
+export { compressImageToBase64 };
 
 /**
  * Open KTP Upload Modal for a resident

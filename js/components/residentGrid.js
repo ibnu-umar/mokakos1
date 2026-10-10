@@ -11,6 +11,7 @@ import { sendReceiptPdfToWhatsApp } from "../services/whatsappService.js";
 import { openPaymentModal } from "./paymentModal.js";
 
 import { openResidentHistoryModal } from "./paymentHistory.js";
+import { openProofViewerModal, openProofUploadModal } from "./proofModal.js";
 
 export function renderCards(filter = store.getFilter()) {
     const grid = document.getElementById("residentsGrid");
@@ -83,6 +84,16 @@ export function renderCards(filter = store.getFilter()) {
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </button>
                 </div>
+                <div class="card-actions-secondary-row" style="margin-top: 6px;">
+                    <button class="btn-card-proof ${r.proofImage ? 'btn-card-proof--has' : ''}" data-action="${r.proofImage ? 'view-proof' : 'upload-proof'}" data-id="${r.id}" title="${r.proofImage ? 'Lihat Foto Bukti Transfer Asli' : 'Upload Foto Bukti Transfer'}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <span>${r.proofImage ? '📸 Foto Bukti Transfer' : '+ Bukti Transfer'}</span>
+                    </button>
+                </div>
                 ` : `
                 <div class="card-actions-primary-row">
                     <button class="btn-card-pay" data-action="pay-resident" data-id="${r.id}" title="Catat Pembayaran">
@@ -131,6 +142,10 @@ function setupEventDelegation() {
             }
         } else if (action === "pay-resident") {
             openPaymentModal(id);
+        } else if (action === "view-proof") {
+            openProofViewerModal(id);
+        } else if (action === "upload-proof") {
+            openProofUploadModal(id);
         } else if (action === "send-reminder-wa") {
             openWhatsAppReminder(id);
         } else if (action === "create-invoice") {

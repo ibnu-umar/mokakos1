@@ -373,6 +373,8 @@ class Store {
             notes: paymentData.notes || paymentData.paymentNote || "",
             status: "paid",
             avatar: paymentData.avatar || "MK",
+            proofImage: paymentData.proofImage || null,
+            proofUploadedAt: paymentData.proofUploadedAt || (paymentData.proofImage ? timestamp : null),
             createdAt: timestamp
         };
 
@@ -380,6 +382,55 @@ class Store {
         this.savePaymentHistory();
         this.notify();
         return record;
+    }
+
+    /**
+     * Update proof of payment for a resident and/or transaction history
+     * @param {string} targetId - residentId or historyId
+     * @param {string} proofImage - Base64 image data
+     */
+    updatePaymentProof(targetId, proofImage) {
+        const timestamp = new Date().toISOString();
+        let changed = false;
+
+        // Check if matching resident exists
+        const resIdx = this.residents.findIndex(r => r.id === targetId);
+        if (resIdx !== -1) {
+            this.residents[resIdx] = {
+                ...this.residents[resIdx],
+                proofImage: proofImage || null,
+                proofUploadedAt: proofImage ? timestamp : null
+            };
+            this.saveResidents();
+            changed = true;
+        }
+
+        // Also update matching payment history items
+        this.paymentHistory = this.paymentHistory.map(item => {
+            if (item.id === targetId || item.residentId === targetId || item.receiptNo === targetId) {
+                changed = true;
+                return {
+                    ...item,
+                    proofImage: proofImage || null,
+                    proofUploadedAt: proofImage ? timestamp : null
+                };
+            }
+            return item;
+        });
+
+        if (changed) {
+            this.savePaymentHistory();
+            this.notify();
+        }
+        return true;
+    }
+
+    /**
+     * Remove proof of payment
+     * @param {string} targetId 
+     */
+    removePaymentProof(targetId) {
+        return this.updatePaymentProof(targetId, null);
     }
 
     /**

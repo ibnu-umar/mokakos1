@@ -70,6 +70,21 @@ export function createReceiptHTML(r) {
             </div>
         </div>
 
+        ${r.proofImage ? `
+        <div style="background: #f0fdf4; border: 1.5px dashed #86efac; border-radius: 8px; padding: 9px 12px; margin: 8px 0 12px; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">📸</span>
+                <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #166534;">Foto Bukti Transfer Terlampir</div>
+                    <div style="font-size: 9.5px; color: #64748b;">Struk pembayaran asli tersimpan di sistem</div>
+                </div>
+            </div>
+            <button type="button" data-action="view-receipt-proof" data-id="${r.id}" style="font-size: 11px; font-weight: 700; color: #15803d; background: #ffffff; border: 1px solid #86efac; padding: 4px 10px; border-radius: 6px; cursor: pointer;">
+                Lihat Foto
+            </button>
+        </div>
+        ` : ''}
+
         <div style="text-align: center; font-size: 10.5px; color: #94a3b8; line-height: 1.5; margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
             Bukti pembayaran ini sah dan dikeluarkan secara digital.<br>
             ${KOST_INFO.nama} — ${KOST_INFO.alamat} &bull; 📞 ${KOST_INFO.telepon}<br>

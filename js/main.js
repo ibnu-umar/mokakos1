@@ -8,6 +8,7 @@ import { initReceiptModal, closeReceiptModal } from "./components/receiptModal.j
 import { initInvoiceModal, closeInvoiceModal } from "./components/invoiceModal.js";
 import { initWhatsAppModal, closeWhatsAppModal } from "./components/whatsappModal.js";
 import { initPaymentModal, closePaymentModal } from "./components/paymentModal.js";
+import { initProofModal, closeProofViewerModal, closeProofUploadModal } from "./components/proofModal.js";
 import { initKtpModal, closeKtpUploadModal, closeKtpViewerModal } from "./components/ktpModal.js";
 import { initResidentDirectory, closeResidentFormModal } from "./components/residentDirectory.js";
 import { initPaymentHistory, closeResidentHistoryModal } from "./components/paymentHistory.js";
@@ -22,6 +23,8 @@ function setupGlobalKeybindings() {
             closeInvoiceModal();
             closeWhatsAppModal();
             closePaymentModal();
+            closeProofViewerModal();
+            closeProofUploadModal();
             closeKtpUploadModal();
             closeKtpViewerModal();
             closeResidentFormModal();
@@ -40,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initInvoiceModal();
     initWhatsAppModal();
     initPaymentModal();
+    initProofModal();
     initKtpModal();
     initResidentDirectory();
     initPaymentHistory();

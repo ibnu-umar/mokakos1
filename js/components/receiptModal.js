@@ -6,6 +6,7 @@ import { store } from "../state/store.js";
 import { formatCurrency, formatDate } from "../utils/formatters.js";
 import { downloadReceiptImage, printReceiptPDF, createReceiptHTML } from "../utils/pdfGenerator.js";
 import { sendReceiptPdfToWhatsApp } from "../services/whatsappService.js";
+import { openProofViewerModal } from "./proofModal.js";
 
 let currentReceiptResident = null;
 
@@ -46,11 +47,21 @@ export function initReceiptModal() {
     const btnPrint = document.getElementById("btnPrint");
     const btnWaReceipt = document.getElementById("btnWaReceipt");
     const btnDownload = document.getElementById("btnDownload");
+    const receiptContent = document.getElementById("receiptContent");
 
     if (closeBtn) closeBtn.addEventListener("click", closeReceiptModal);
     if (modal) {
         modal.addEventListener("click", (e) => {
             if (e.target === modal) closeReceiptModal();
+        });
+    }
+
+    if (receiptContent) {
+        receiptContent.addEventListener("click", (e) => {
+            const btn = e.target.closest('[data-action="view-receipt-proof"]');
+            if (btn && currentReceiptResident) {
+                openProofViewerModal(currentReceiptResident);
+            }
         });
     }
 

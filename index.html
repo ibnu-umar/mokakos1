@@ -663,6 +663,63 @@
                         placeholder="Contoh: Ref BCA 981723 / Titip penjaga">
                 </div>
 
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Upload Bukti Pembayaran / Struk Transfer</span>
+                        <span class="form-badge-optional">Opsional</span>
+                    </label>
+
+                    <!-- Payment Proof Dropzone -->
+                    <div class="ktp-dropzone payment-proof-dropzone" id="paymentProofDropzone">
+                        <input type="file" id="paymentProofFile" accept="image/*" style="display:none;">
+                        <div class="dropzone-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                        </div>
+                        <div class="dropzone-text">
+                            <strong>Pilih atau Seret Foto Bukti Pembayaran</strong>
+                            <span>Struk ATM, Screenshot M-Banking, atau E-Wallet (JPG, PNG)</span>
+                        </div>
+                        <button type="button" class="btn-browse-file" id="btnBrowsePaymentProof">Pilih Foto Bukti</button>
+                    </div>
+
+                    <!-- Payment Proof Preview Container -->
+                    <div class="ktp-preview-box payment-proof-preview-box" id="paymentProofPreviewContainer" style="display:none;">
+                        <img src="" alt="Pratinjau Bukti Pembayaran" class="payment-proof-preview-image" id="paymentProofPreviewImg">
+                        <div class="ktp-preview-actions">
+                            <div class="proof-preview-info">
+                                <span class="proof-preview-badge">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    Bukti Terpilih
+                                </span>
+                                <span class="proof-preview-size" id="paymentProofFileSize"></span>
+                            </div>
+                            <div style="display:flex; gap:6px;">
+                                <button type="button" class="btn-preview-action" id="btnChangePaymentProof">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                        <polyline points="17 8 12 3 7 8" />
+                                        <line x1="12" y1="3" x2="12" y2="15" />
+                                    </svg>
+                                    Ganti
+                                </button>
+                                <button type="button" class="btn-preview-action btn-preview-action--danger" id="btnRemovePaymentProof">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6" />
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                    Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn btn-print" id="btnCancelPayment">Batal</button>
                     <button type="submit" class="btn btn-pay-confirm" id="btnConfirmPayment">
@@ -670,6 +727,126 @@
                             <polyline points="20 6 9 17 4 12" />
                         </svg>
                         Konfirmasi Lunas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bukti Pembayaran Viewer Modal (Lightbox) -->
+    <div class="modal-overlay" id="proofViewerModal">
+        <div class="modal modal--wide modal--viewer">
+            <button class="modal-close" id="proofViewerModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="ktp-viewer-header">
+                <div>
+                    <h3 class="ktp-viewer-title" id="proofViewerTitle">Bukti Pembayaran / Transfer</h3>
+                    <p class="ktp-viewer-sub" id="proofViewerSubtitle">-</p>
+                </div>
+                <div class="ktp-viewer-meta">
+                    <span class="proof-viewer-amount" id="proofViewerAmount">Rp 0</span>
+                    <span class="ktp-viewer-date" id="proofViewerDate">-</span>
+                </div>
+            </div>
+
+            <div class="proof-viewer-details-badge" id="proofViewerDetailsBadge">
+                <!-- Info badges injected by JS -->
+            </div>
+
+            <div class="ktp-viewer-img-wrap proof-viewer-img-wrap">
+                <img src="" alt="Bukti Pembayaran" id="proofViewerImg" class="ktp-viewer-img">
+            </div>
+
+            <div class="modal-actions" style="margin-top:16px; justify-content: space-between;">
+                <button type="button" class="btn btn-print btn--danger" id="btnViewerDeleteProof">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                    Hapus Bukti
+                </button>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" class="btn btn-download" id="btnViewerDownloadProof">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Unduh Gambar
+                    </button>
+                    <button type="button" class="btn btn-print" id="btnViewerCloseProof">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Upload Bukti Pembayaran Modal -->
+    <div class="modal-overlay" id="proofUploadModal">
+        <div class="modal">
+            <button class="modal-close" id="proofUploadModalClose" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="payment-modal-header">
+                <div class="payment-icon-badge" style="background: linear-gradient(135deg, var(--clr-brand-light), var(--clr-brand));">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="payment-modal-title">Upload Bukti Pembayaran</h3>
+                    <p class="payment-modal-sub" id="quickProofResidentName">-</p>
+                </div>
+            </div>
+
+            <form id="quickProofUploadForm">
+                <div class="form-group">
+                    <label class="form-label">Foto Struk / Resi Transfer</label>
+
+                    <div class="ktp-dropzone payment-proof-dropzone" id="quickProofDropzone">
+                        <input type="file" id="quickProofFileInput" accept="image/*" style="display:none;">
+                        <div class="dropzone-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                        </div>
+                        <div class="dropzone-text">
+                            <strong>Pilih atau Seret Foto Bukti Transfer ke Sini</strong>
+                            <span>Format JPG, PNG, JPEG, WebP (Maks. 5MB)</span>
+                        </div>
+                        <button type="button" class="btn-browse-file" id="btnBrowseQuickProof">Pilih Berkas</button>
+                    </div>
+
+                    <div class="ktp-preview-box payment-proof-preview-box" id="quickProofPreviewContainer" style="display:none;">
+                        <img src="" alt="Pratinjau Bukti" class="payment-proof-preview-image" id="quickProofPreviewImg">
+                        <div class="ktp-preview-actions">
+                            <button type="button" class="btn-preview-action" id="btnChangeQuickProof">Ganti Foto</button>
+                            <button type="button" class="btn-preview-action btn-preview-action--danger" id="btnRemoveQuickProof">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-print" id="btnCancelQuickProof">Batal</button>
+                    <button type="submit" class="btn btn-pay-confirm" id="btnSaveQuickProof">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Simpan Bukti
                     </button>
                 </div>
             </form>
