@@ -84,9 +84,15 @@ function updateInvoiceFieldsVisibility() {
     const dpPaid = r && r.status === "dp" ? (Number(r.dpAmount) || 0) : 0;
     const sisaExisting = Math.max(0, baseAmount - dpPaid);
 
+    // Dynamic labels based on invoice type
+    const amountLabel = document.querySelector('label[for="invoiceAmount"]');
+    const totalLabel = document.querySelector('.form-total-label');
+
     if (activeInvoiceType === "dp") {
         if (dpGroup) dpGroup.style.display = "block";
         if (dpRemainingBox) dpRemainingBox.style.display = "none";
+        if (amountLabel) amountLabel.textContent = "Total Biaya Sewa Pokok (Rp)";
+        if (totalLabel) totalLabel.textContent = "Total Tagihan DP";
 
         const dpVal = parseInt(dpAmountInput ? dpAmountInput.value : 0) || 0;
         if (dpVal > 0) {
@@ -99,6 +105,8 @@ function updateInvoiceFieldsVisibility() {
     } else if (activeInvoiceType === "dp_remaining") {
         if (dpGroup) dpGroup.style.display = "none";
         if (dpRemainingBox) dpRemainingBox.style.display = "block";
+        if (amountLabel) amountLabel.textContent = "Total Biaya Sewa Pokok (Rp)";
+        if (totalLabel) totalLabel.textContent = "Total Sisa Pelunasan";
 
         const totalSewaLabel = document.getElementById("invDpTotalSewaLabel");
         const alreadyPaidLabel = document.getElementById("invDpAlreadyPaidLabel");
@@ -110,6 +118,8 @@ function updateInvoiceFieldsVisibility() {
     } else {
         if (dpGroup) dpGroup.style.display = "none";
         if (dpRemainingBox) dpRemainingBox.style.display = "none";
+        if (amountLabel) amountLabel.textContent = "Biaya Kost (Rp)";
+        if (totalLabel) totalLabel.textContent = "Total Tagihan";
     }
 
     updateInvoiceTotal();
@@ -427,11 +437,18 @@ async function saveInvoice(shareWa = false) {
             dueDate: currentInvoiceData.dueDate
         });
     } else if (currentInvoiceData.invoiceType === "dp") {
-        // If billing for DP, keep status unpaid (waiting for DP) but update period/dueDate
+        // If billing for DP, reset status to unpaid and clear old payment data
         store.updateResident(currentInvoiceData.residentId, {
             period: currentInvoiceData.period,
             dueDate: currentInvoiceData.dueDate,
-            amount: currentInvoiceData.totalSewa
+            amount: currentInvoiceData.totalSewa,
+            status: "unpaid",
+            paidDate: null,
+            method: null,
+            dpAmount: null,
+            dpPaidDate: null,
+            dpMethod: null,
+            dpRemaining: null
         });
     } else {
         // Full new bill

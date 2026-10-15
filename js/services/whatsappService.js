@@ -275,7 +275,7 @@ export async function shareInvoiceFileCommon(inv) {
 
     const { file, dataUrl, filename } = fileObj;
     const shareTitle = `Surat Tagihan — ${inv.name}`;
-    const shareText = `Surat Tagihan Pembayaran Kost (${inv.period}) — Moka Kost`;
+    const shareText = getWhatsAppInvoiceText(inv);
 
     // 1. Try native Web Share API with files (Android, iOS, supported desktop browsers)
     if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -304,16 +304,17 @@ export async function shareInvoiceFileCommon(inv) {
     link.click();
     link.remove();
 
-    // 3. Open WhatsApp common sharing (WITHOUT targeting an exact phone number)
-    // api.whatsapp.com/send?text=... lets user manually pick any chat or contact in WhatsApp
-    const caption = `Surat Tagihan Sewa Moka Kost (${inv.period}) untuk ${inv.name}. Total: ${formatCurrency(inv.total)}`;
-    const commonWaUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(caption)}`;
+    // 3. Open WhatsApp directly to resident's phone with formatted invoice text
+    const phone = inv.phone ? formatWhatsAppPhone(inv.phone) : "";
+    const waUrl = phone 
+        ? buildWhatsAppUrl(phone, shareText)
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
 
     setTimeout(() => {
-        window.open(commonWaUrl, "_blank");
+        window.open(waUrl, "_blank");
         showToast(
             "Membuka WhatsApp...",
-            `Berkas (${filename}) telah tersimpan. Silakan pilih kontak di WhatsApp dan lampirkan berkas gambar tagihannya.`
+            `Berkas (${filename}) telah tersimpan. Silakan kirim pesan dan lampirkan berkas gambar tagihannya.`
         );
     }, 400);
 }
