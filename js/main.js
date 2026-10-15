@@ -12,8 +12,6 @@ import { initProofModal, closeProofViewerModal, closeProofUploadModal } from "./
 import { initKtpModal, closeKtpUploadModal, closeKtpViewerModal } from "./components/ktpModal.js";
 import { initResidentDirectory, closeResidentFormModal } from "./components/residentDirectory.js";
 import { initPaymentHistory, closeResidentHistoryModal } from "./components/paymentHistory.js";
-import { initThemeSwitcher } from "./components/themeSwitcher.js";
-import { initCustomCursor } from "./components/customCursor.js";
 
 // Global escape key handler to close all open modals
 function setupGlobalKeybindings() {
@@ -35,8 +33,6 @@ function setupGlobalKeybindings() {
 
 // Bootstrap all modular components
 document.addEventListener("DOMContentLoaded", () => {
-    initThemeSwitcher();
-    initCustomCursor();
     initStats();
     initResidentGrid();
     initReceiptModal();
