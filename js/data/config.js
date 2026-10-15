@@ -95,7 +95,7 @@ export const PENGHUNI = [
         id: "MK-2026-005",
         name: "Ega Prastyo",
         room: "Kamar 05",
-        phone: "0821-9999-0000",
+        phone: "085935668103",
         amount: 1800000,
         period: "Oktober 2026",
         dueDate: "2026-10-05",
