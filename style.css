@@ -495,77 +495,77 @@ body {
     flex-direction: column;
     gap: 8px;
     margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--clr-border);
     width: 100%;
 }
 
-.card-actions-paid-row {
-    display: flex;
-    align-items: center;
+.card-actions-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     width: 100%;
 }
 
-.card-actions-paid-row .btn-receipt {
-    flex: 1;
-}
-
-.card-actions-paid-row .btn-card-wa {
-    flex: 1;
-}
-
-.card-actions-primary-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.card-actions-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
     width: 100%;
 }
 
-.card-actions-primary-row .btn-card-pay {
-    flex: 1;
+.card-actions-grid-3 .btn-card-action {
+    padding: 0 4px;
+    font-size: 0.76rem;
+    gap: 4px;
 }
 
-.card-actions-secondary-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-}
-
-.card-actions-secondary-row .btn-card-reminder,
-.card-actions-secondary-row .btn-card-invoice {
-    flex: 1;
-}
-
-.btn-receipt {
+/* Base style for all action buttons at the bottom of cards */
+.btn-card-action {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 10px 14px;
-    min-height: 40px;
-    border: none;
-    border-radius: var(--radius-md);
+    min-width: 0;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 10px;
+    border-radius: var(--radius-sm);
     font-family: var(--font);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    white-space: nowrap;
+    text-decoration: none;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+.btn-card-action span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-card-action svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+/* Struk / Receipt Button */
+.btn-receipt {
+    border: none;
     background: linear-gradient(135deg, var(--clr-brand), var(--clr-brand-dark));
     color: white;
-    box-shadow: 0 4px 16px var(--clr-brand-glow);
-    white-space: nowrap;
+    box-shadow: 0 3px 12px var(--clr-brand-glow);
 }
 
 .btn-receipt:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 24px var(--clr-brand-glow);
+    box-shadow: 0 5px 18px var(--clr-brand-glow);
     filter: brightness(1.06);
-}
-
-.btn-receipt svg {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
 }
 
 .btn-receipt:disabled {
@@ -579,128 +579,84 @@ body {
     transform: none;
 }
 
+/* WhatsApp Action Button */
 .btn-card-wa {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 14px;
-    min-height: 40px;
-    border: 1px solid rgba(37, 211, 102, 0.25);
-    border-radius: var(--radius-md);
-    font-family: var(--font);
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
+    border: 1px solid rgba(37, 211, 102, 0.35);
     background: var(--clr-wa-bg);
-    color: var(--clr-wa);
-    white-space: nowrap;
+    color: #128c7e;
 }
 
 .btn-card-wa:hover {
     background: var(--clr-wa);
     color: white;
-    box-shadow: 0 4px 16px var(--clr-wa-glow);
+    border-color: var(--clr-wa);
+    box-shadow: 0 4px 14px var(--clr-wa-glow);
     transform: translateY(-1px);
 }
 
-.btn-card-wa svg {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
-}
-
+/* Primary Payment / Settlement Call-to-Action */
 .btn-card-pay {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 14px;
-    min-height: 40px;
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
     border: none;
-    border-radius: var(--radius-md);
-    font-family: var(--font);
-    font-size: 0.85rem;
+    font-size: 0.86rem;
     font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.28);
-    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
 }
 
 .btn-card-pay:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 24px rgba(16, 185, 129, 0.4);
-    filter: brightness(1.08);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    filter: brightness(1.06);
 }
 
 .btn-card-pay.btn-card-pay--dp {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.28);
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.28);
 }
 
 .btn-card-pay.btn-card-pay--dp:hover {
-    box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
-.btn-card-pay svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-}
-
+/* WhatsApp Reminder Button */
 .btn-card-reminder {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 12px;
-    min-height: 40px;
-    border: none;
-    border-radius: var(--radius-md);
-    font-family: var(--font);
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    background: linear-gradient(135deg, #25d366, #128c7e);
-    color: white;
-    box-shadow: 0 4px 16px var(--clr-wa-glow);
-    white-space: nowrap;
+    background: var(--clr-surface-2);
+    border: 1px solid rgba(37, 211, 102, 0.35);
+    color: #128c7e;
 }
 
 .btn-card-reminder:hover {
+    background: var(--clr-wa);
+    color: white;
+    border-color: var(--clr-wa);
+    box-shadow: 0 4px 14px var(--clr-wa-glow);
     transform: translateY(-1px);
-    filter: brightness(1.08);
-    box-shadow: 0 6px 24px var(--clr-wa-glow);
 }
 
-.btn-card-reminder svg {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
-}
-
-.btn-card-invoice {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 12px;
-    min-height: 40px;
-    border: 1px solid var(--clr-border);
-    border-radius: var(--radius-md);
-    font-family: var(--font);
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
+/* Subtle Secondary Action (Invoice, History, etc.) */
+.btn-card-subtle {
     background: var(--clr-surface-2);
+    border: 1px solid var(--clr-border);
     color: var(--clr-text);
-    white-space: nowrap;
+}
+
+.btn-card-subtle:hover {
+    background: var(--clr-surface-3);
+    border-color: var(--clr-border-hover);
+    color: var(--clr-brand-light);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Legacy helper aliases */
+.btn-card-invoice {
+    background: var(--clr-surface-2);
+    border: 1px solid var(--clr-border);
+    color: var(--clr-text);
 }
 
 .btn-card-invoice:hover {
@@ -711,28 +667,16 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
-.btn-card-invoice svg {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
-}
-
 .btn-card-hist {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    min-width: 40px;
-    height: 40px;
-    min-height: 40px;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     border: 1px solid var(--clr-border);
     background: var(--clr-surface-2);
     color: var(--clr-text-muted);
     cursor: pointer;
     transition: var(--transition);
-    padding: 0;
-    flex-shrink: 0;
 }
 
 .btn-card-hist:hover {
@@ -740,13 +684,6 @@ body {
     color: var(--clr-brand-light);
     border-color: var(--clr-brand-glow);
     transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-}
-
-.btn-card-hist svg {
-    width: 17px;
-    height: 17px;
-    flex-shrink: 0;
 }
 
 /* --- Modal --- */
@@ -3144,6 +3081,20 @@ body {
     }
 }
 
+@media (max-width: 480px) {
+    .card-actions {
+        padding-top: 12px;
+        gap: 6px;
+    }
+
+    .btn-card-action {
+        height: 36px;
+        min-height: 36px;
+        font-size: 0.76rem;
+        padding: 0 8px;
+    }
+}
+
 @media (max-width: 360px) {
     .nav-tab {
         padding: 6px 4px;
@@ -3154,6 +3105,14 @@ body {
     .nav-tab svg {
         width: 13px;
         height: 13px;
+    }
+
+    .card-actions-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .card-actions-grid-2 {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -4053,17 +4012,15 @@ body {
 
 /* Dashboard Card Proof Button */
 .btn-card-proof {
-    width: 100%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 6px 12px;
     border-radius: var(--radius-sm);
     font-family: var(--font);
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    background: var(--clr-surface-3);
+    background: var(--clr-surface-2);
     border: 1px dashed var(--clr-border);
     color: var(--clr-text-muted);
     cursor: pointer;
@@ -4078,8 +4035,9 @@ body {
 
 .btn-card-proof--has {
     background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    border: 1px solid rgba(16, 185, 129, 0.35);
     color: #10b981;
+    font-weight: 700;
 }
 
 .btn-card-proof--has:hover {

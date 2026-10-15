@@ -5,13 +5,22 @@
 import { initialResidents } from "../data/residents.js";
 import { initialPaymentHistory } from "../data/paymentHistory.js";
 
-const STORAGE_KEY = "mokakos_residents_data_v2";
-const STORAGE_KEY_HISTORY = "mokakos_payment_history_v1";
+const STORAGE_KEY = "mokakos_residents_data_v3";
+const STORAGE_KEY_HISTORY = "mokakos_payment_history_v2";
+
+// Clean up previous localStorage cache versions
+try {
+    localStorage.removeItem("mokakos_residents_data_v1");
+    localStorage.removeItem("mokakos_residents_data_v2");
+    localStorage.removeItem("mokakos_payment_history_v1");
+} catch (e) {}
 
 class Store {
     constructor() {
         this.residents = this.loadResidents();
         this.paymentHistory = this.loadPaymentHistory();
+        this.saveResidents();
+        this.savePaymentHistory();
         this.currentFilter = "all";
         this.currentView = "dashboard"; // 'dashboard' | 'history' | 'directory'
         this.ktpFilter = "all"; // 'all' | 'has_ktp' | 'no_ktp'
@@ -51,14 +60,13 @@ class Store {
                                 period: configItem.period,
                                 dueDate: configItem.dueDate,
                                 avatar: configItem.avatar || savedItem.avatar,
-                                ...(savedItem.status === configItem.status ? {
-                                    paidDate: configItem.paidDate,
-                                    method: configItem.method
-                                } : {}),
-                                dpAmount: savedItem.dpAmount,
-                                dpPaidDate: savedItem.dpPaidDate,
-                                dpMethod: savedItem.dpMethod,
-                                dpRemaining: savedItem.dpRemaining
+                                status: configItem.status || savedItem.status,
+                                paidDate: configItem.status === "unpaid" ? null : (configItem.paidDate ?? savedItem.paidDate),
+                                method: configItem.status === "unpaid" ? null : (configItem.method ?? savedItem.method),
+                                dpAmount: configItem.status === "unpaid" ? null : (configItem.dpAmount ?? savedItem.dpAmount),
+                                dpPaidDate: configItem.status === "unpaid" ? null : (configItem.dpPaidDate ?? savedItem.dpPaidDate),
+                                dpMethod: configItem.status === "unpaid" ? null : (configItem.dpMethod ?? savedItem.dpMethod),
+                                dpRemaining: configItem.status === "unpaid" ? null : (configItem.dpRemaining ?? savedItem.dpRemaining)
                             };
                         }
                         return savedItem;
@@ -94,6 +102,10 @@ class Store {
      */
     loadPaymentHistory() {
         try {
+            // When initial payment history is cleared in config.js, clear stored history as well
+            if (!initialPaymentHistory || initialPaymentHistory.length === 0) {
+                return [];
+            }
             const saved = localStorage.getItem(STORAGE_KEY_HISTORY);
             if (saved) {
                 const parsed = JSON.parse(saved);

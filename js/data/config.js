@@ -47,9 +47,9 @@ export const PENGHUNI = [
         amount: 1500000,
         period: "Oktober 2026",
         dueDate: "2026-10-05",
-        paidDate: "2026-10-02",
-        method: "Transfer BCA",
-        status: "paid",
+        paidDate: null,
+        method: null,
+        status: "unpaid",
         avatar: "MK"
     },
     {
@@ -60,9 +60,9 @@ export const PENGHUNI = [
         amount: 1500000,
         period: "Oktober 2026",
         dueDate: "2026-10-05",
-        paidDate: "2026-10-03",
-        method: "Transfer Mandiri",
-        status: "paid",
+        paidDate: null,
+        method: null,
+        status: "unpaid",
         avatar: "VL"
     },
     {
@@ -73,9 +73,9 @@ export const PENGHUNI = [
         amount: 1700000,
         period: "Oktober 2026",
         dueDate: "2026-10-05",
-        paidDate: "2026-10-01",
-        method: "GoPay",
-        status: "paid",
+        paidDate: null,
+        method: null,
+        status: "unpaid",
         avatar: "DW"
     },
     {
@@ -99,9 +99,9 @@ export const PENGHUNI = [
         amount: 1800000,
         period: "Oktober 2026",
         dueDate: "2026-10-05",
-        paidDate: "2026-09-30",
-        method: "Transfer BRI",
-        status: "paid",
+        paidDate: null,
+        method: null,
+        status: "unpaid",
         avatar: "EK"
     },
     {
@@ -123,76 +123,7 @@ export const PENGHUNI = [
 // ─── RIWAYAT PEMBAYARAN AWAL ────────────────────────────
 // Data transaksi yang sudah pernah tercatat sebelumnya.
 // Akan ditambah otomatis oleh sistem saat penghuni membayar.
-export const RIWAYAT_PEMBAYARAN = [
-    {
-        id: "TRX-202610-001",
-        receiptNo: "MK-2026-001",
-        residentId: "MK-2026-001",
-        name: "Muhammad Kholil Fathurrochman",
-        room: "Kamar 04",
-        phone: "081211810727",
-        amount: 1500000,
-        period: "Oktober 2026",
-        dueDate: "2026-10-05",
-        paidDate: "2026-10-02",
-        method: "Transfer BCA",
-        notes: "Lunas sewa kamar bulan Oktober 2026",
-        status: "paid",
-        avatar: "MK",
-        createdAt: "2026-10-02T09:15:00.000Z"
-    },
-    {
-        id: "TRX-202610-002",
-        receiptNo: "MK-2026-002",
-        residentId: "MK-2026-002",
-        name: "valen",
-        room: "Kamar 01",
-        phone: "0813-3333-4444",
-        amount: 1500000,
-        period: "Oktober 2026",
-        dueDate: "2026-10-05",
-        paidDate: "2026-10-03",
-        method: "Transfer Mandiri",
-        notes: "Ref Mandiri #998231",
-        status: "paid",
-        avatar: "VL",
-        createdAt: "2026-10-03T14:20:00.000Z"
-    },
-    {
-        id: "TRX-202610-003",
-        receiptNo: "MK-2026-003",
-        residentId: "MK-2026-003",
-        name: "Dewi",
-        room: "Kamar 02",
-        phone: "0857-5555-6666",
-        amount: 1700000,
-        period: "Oktober 2026",
-        dueDate: "2026-10-05",
-        paidDate: "2026-10-01",
-        method: "GoPay",
-        notes: "Pembayaran via GoPay e-wallet",
-        status: "paid",
-        avatar: "DW",
-        createdAt: "2026-10-01T11:05:00.000Z"
-    },
-    {
-        id: "TRX-202610-005",
-        receiptNo: "MK-2026-005",
-        residentId: "MK-2026-005",
-        name: "Eka",
-        room: "Kamar 05",
-        phone: "0821-9999-0000",
-        amount: 1800000,
-        period: "Oktober 2026",
-        dueDate: "2026-10-05",
-        paidDate: "2026-09-30",
-        method: "Transfer BRI",
-        notes: "Transfer via BRImo",
-        status: "paid",
-        avatar: "EK",
-        createdAt: "2026-09-30T16:45:00.000Z"
-    }
-];
+export const RIWAYAT_PEMBAYARAN = [];
 
 
 // ─── HELPER: Format teks rekening ───────────────────────

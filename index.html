@@ -14,7 +14,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script>
-        try { localStorage.setItem("mokakos_theme", "light"); } catch(e) {}
+        try { localStorage.setItem("mokakos_theme", "light"); } catch (e) { }
     </script>
 </head>
 
@@ -539,20 +539,24 @@
                         <label class="form-label">Jenis Tagihan</label>
                         <div class="invoice-type-toggle" id="invoiceTypeToggle">
                             <button type="button" class="invoice-type-btn active" data-type="full">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
+                                    height="15">
                                     <polyline points="20 6 9 17 4 12" />
                                 </svg>
                                 Tagihan Penuh
                             </button>
                             <button type="button" class="invoice-type-btn" data-type="dp">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
+                                    height="15">
                                     <circle cx="12" cy="12" r="10" />
                                     <path d="M8 12h8" />
                                 </svg>
                                 Tagihan DP
                             </button>
-                            <button type="button" class="invoice-type-btn" data-type="dp_remaining" id="btnInvoiceTypeDpRemaining" style="display: none;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                            <button type="button" class="invoice-type-btn" data-type="dp_remaining"
+                                id="btnInvoiceTypeDpRemaining" style="display: none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
+                                    height="15">
                                     <circle cx="12" cy="12" r="10" />
                                     <polyline points="12 6 12 12 16 14" />
                                 </svg>
@@ -569,7 +573,8 @@
                         </label>
                         <div class="dp-input-wrapper">
                             <span class="dp-input-prefix">Rp</span>
-                            <input class="form-input dp-amount-input" type="number" id="invoiceDpAmount" min="1" placeholder="Contoh: 500000">
+                            <input class="form-input dp-amount-input" type="number" id="invoiceDpAmount" min="1"
+                                placeholder="Contoh: 500000">
                         </div>
                         <div class="dp-remaining-info" id="invoiceDpRemainingInfo" style="display: none;">
                             <span class="dp-remaining-label">Sisa Pelunasan Nanti:</span>
@@ -586,7 +591,8 @@
                             </div>
                             <div class="card-dp-row">
                                 <span class="card-dp-label">DP yang Telah Masuk:</span>
-                                <span class="card-dp-value" style="color: #3b82f6;" id="invDpAlreadyPaidLabel">Rp 0</span>
+                                <span class="card-dp-value" style="color: #3b82f6;" id="invDpAlreadyPaidLabel">Rp
+                                    0</span>
                             </div>
                             <div class="card-dp-row">
                                 <span class="card-dp-label" style="font-weight: 700;">Sisa yang Ditagihkan:</span>
@@ -707,13 +713,15 @@
                     <label class="form-label">Jenis Pembayaran</label>
                     <div class="payment-type-toggle" id="paymentTypeToggle">
                         <button type="button" class="payment-type-btn active" data-type="full">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"
+                                height="16">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                             Lunas
                         </button>
                         <button type="button" class="payment-type-btn" data-type="dp">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                height="16">
                                 <circle cx="12" cy="12" r="10" />
                                 <path d="M8 12h8" />
                             </svg>
@@ -729,7 +737,8 @@
                     </label>
                     <div class="dp-input-wrapper">
                         <span class="dp-input-prefix">Rp</span>
-                        <input class="form-input dp-amount-input" type="number" id="dpAmount" min="1" placeholder="Contoh: 500000">
+                        <input class="form-input dp-amount-input" type="number" id="dpAmount" min="1"
+                            placeholder="Contoh: 500000">
                     </div>
                     <div class="dp-remaining-info" id="dpRemainingInfo" style="display: none;">
                         <span class="dp-remaining-label">Sisa tagihan:</span>
@@ -763,7 +772,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="form-label"
+                        style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Upload Bukti Pembayaran / Struk Transfer</span>
                         <span class="form-badge-optional">Opsional</span>
                     </label>
@@ -772,7 +782,8 @@
                     <div class="ktp-dropzone payment-proof-dropzone" id="paymentProofDropzone">
                         <input type="file" id="paymentProofFile" accept="image/*" style="display:none;">
                         <div class="dropzone-icon">
-                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor"
+                                stroke-width="1.8">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                                 <circle cx="8.5" cy="8.5" r="1.5" />
                                 <polyline points="21 15 16 10 5 21" />
@@ -782,16 +793,20 @@
                             <strong>Pilih atau Seret Foto Bukti Pembayaran</strong>
                             <span>Struk ATM, Screenshot M-Banking, atau E-Wallet (JPG, PNG)</span>
                         </div>
-                        <button type="button" class="btn-browse-file" id="btnBrowsePaymentProof">Pilih Foto Bukti</button>
+                        <button type="button" class="btn-browse-file" id="btnBrowsePaymentProof">Pilih Foto
+                            Bukti</button>
                     </div>
 
                     <!-- Payment Proof Preview Container -->
-                    <div class="ktp-preview-box payment-proof-preview-box" id="paymentProofPreviewContainer" style="display:none;">
-                        <img src="" alt="Pratinjau Bukti Pembayaran" class="payment-proof-preview-image" id="paymentProofPreviewImg">
+                    <div class="ktp-preview-box payment-proof-preview-box" id="paymentProofPreviewContainer"
+                        style="display:none;">
+                        <img src="" alt="Pratinjau Bukti Pembayaran" class="payment-proof-preview-image"
+                            id="paymentProofPreviewImg">
                         <div class="ktp-preview-actions">
                             <div class="proof-preview-info">
                                 <span class="proof-preview-badge">
-                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                                        stroke-width="2.5">
                                         <polyline points="20 6 9 17 4 12" />
                                     </svg>
                                     Bukti Terpilih
@@ -800,17 +815,21 @@
                             </div>
                             <div style="display:flex; gap:6px;">
                                 <button type="button" class="btn-preview-action" id="btnChangePaymentProof">
-                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                         <polyline points="17 8 12 3 7 8" />
                                         <line x1="12" y1="3" x2="12" y2="15" />
                                     </svg>
                                     Ganti
                                 </button>
-                                <button type="button" class="btn-preview-action btn-preview-action--danger" id="btnRemovePaymentProof">
-                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                                <button type="button" class="btn-preview-action btn-preview-action--danger"
+                                    id="btnRemovePaymentProof">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                                        stroke-width="2">
                                         <polyline points="3 6 5 6 21 6" />
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                        <path
+                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                                     </svg>
                                     Hapus
                                 </button>
@@ -897,7 +916,8 @@
             </button>
 
             <div class="payment-modal-header">
-                <div class="payment-icon-badge" style="background: linear-gradient(135deg, var(--clr-brand-light), var(--clr-brand));">
+                <div class="payment-icon-badge"
+                    style="background: linear-gradient(135deg, var(--clr-brand-light), var(--clr-brand));">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="17 8 12 3 7 8" />
@@ -917,7 +937,8 @@
                     <div class="ktp-dropzone payment-proof-dropzone" id="quickProofDropzone">
                         <input type="file" id="quickProofFileInput" accept="image/*" style="display:none;">
                         <div class="dropzone-icon">
-                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor"
+                                stroke-width="1.8">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                                 <circle cx="8.5" cy="8.5" r="1.5" />
                                 <polyline points="21 15 16 10 5 21" />
@@ -930,11 +951,14 @@
                         <button type="button" class="btn-browse-file" id="btnBrowseQuickProof">Pilih Berkas</button>
                     </div>
 
-                    <div class="ktp-preview-box payment-proof-preview-box" id="quickProofPreviewContainer" style="display:none;">
+                    <div class="ktp-preview-box payment-proof-preview-box" id="quickProofPreviewContainer"
+                        style="display:none;">
                         <img src="" alt="Pratinjau Bukti" class="payment-proof-preview-image" id="quickProofPreviewImg">
                         <div class="ktp-preview-actions">
-                            <button type="button" class="btn-preview-action" id="btnChangeQuickProof">Ganti Foto</button>
-                            <button type="button" class="btn-preview-action btn-preview-action--danger" id="btnRemoveQuickProof">Hapus</button>
+                            <button type="button" class="btn-preview-action" id="btnChangeQuickProof">Ganti
+                                Foto</button>
+                            <button type="button" class="btn-preview-action btn-preview-action--danger"
+                                id="btnRemoveQuickProof">Hapus</button>
                         </div>
                     </div>
                 </div>
@@ -1312,7 +1336,7 @@
                 <p>Moka Kost &copy; 2026. Semua hak dilindungi.</p>
             </div>
             <div class="footer-info">
-                <p>📍 Jl. Mulawarman IV RT 02 RW 01 Kramas, Kec.Tembalang, Kota Semarang</p>
+                <p>📍 Jl. Mulawarman IV RT 03 RW 01 Kramas, Kec.Tembalang, Kota Semarang</p>
                 <p>📞 0851-7545-0467</p>
             </div>
         </div>
