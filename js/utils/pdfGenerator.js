@@ -12,13 +12,21 @@ import { KOST_INFO, rekeningHTML } from "../data/config.js";
  * @returns {string}
  */
 export function createReceiptHTML(r) {
+    const isDp = r.status === "dp" || r.type === "dp";
+    const totalSewa = Number(r.totalAmount) || Number(r.amount) || 0;
+    const dpPaid = isDp ? (Number(r.dpAmount) || Number(r.amount) || 0) : (Number(r.dpAmount) || 0);
+    const sisaTagihan = isDp ? Math.max(0, totalSewa - dpPaid) : 0;
+    const isPelunasan = r.type === "pelunasan" || (!isDp && dpPaid > 0);
+
     return `
         <div style="text-align: center; margin-bottom: 14px;">
             <img src="logo.jpg" alt="Moka Kost" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; margin-bottom: 6px; display: inline-block;">
             <div style="font-size: 19px; font-weight: 800; color: #a06a3a; letter-spacing: -0.3px; line-height: 1.2;">MOKA KOST</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Bukti Pembayaran Kost</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                ${isDp ? 'Bukti Pembayaran Uang Muka (DP)' : 'Bukti Pembayaran Kost'}
+            </div>
             <div style="display: inline-block; font-family: monospace; font-size: 11px; background: #f8fafc; color: #475569; padding: 3px 12px; border-radius: 20px; margin-top: 6px; font-weight: 700; border: 1px solid #e2e8f0;">
-                No. Kuitansi: #${r.id}
+                No. Kuitansi: #${r.receiptNo || r.id}
             </div>
         </div>
 
@@ -50,17 +58,53 @@ export function createReceiptHTML(r) {
                     <td style="padding: 8px 0; color: #64748b;">Metode Pembayaran</td>
                     <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${r.method || 'Transfer BCA'}</td>
                 </tr>
+                ${isDp ? `
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px 0; color: #64748b;">Total Biaya Sewa</td>
+                    <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(totalSewa)}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px 0; color: #3b82f6; font-weight: 600;">DP yang Diterima</td>
+                    <td style="padding: 8px 0; font-weight: 700; color: #2563eb; text-align: right;">${formatCurrency(dpPaid)}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px 0; color: #f59e0b; font-weight: 600;">Sisa yang Harus Dilunasi</td>
+                    <td style="padding: 8px 0; font-weight: 700; color: #d97706; text-align: right;">${formatCurrency(sisaTagihan)}</td>
+                </tr>
+                ` : isPelunasan ? `
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px 0; color: #64748b;">Total Biaya Sewa</td>
+                    <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(totalSewa)}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px 0; color: #64748b;">DP Sebelumnya</td>
+                    <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(dpPaid)}</td>
+                </tr>
+                ` : ''}
             </tbody>
         </table>
 
         <div style="border-top: 1.5px dashed #cbd5e1; margin: 14px 0;"></div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0 8px;">
-            <span style="font-size: 13.5px; font-weight: 700; color: #1e293b;">Total Pembayaran</span>
-            <span style="font-size: 18px; font-weight: 800; color: #a06a3a;">${formatCurrency(r.amount)}</span>
+            <span style="font-size: 13.5px; font-weight: 700; color: #1e293b;">
+                ${isDp ? 'Total Uang Muka (DP)' : isPelunasan ? 'Jumlah Pelunasan' : 'Total Pembayaran'}
+            </span>
+            <span style="font-size: 18px; font-weight: 800; color: ${isDp ? '#2563eb' : '#a06a3a'};">
+                ${formatCurrency(isDp ? dpPaid : r.amount)}
+            </span>
         </div>
 
         <div style="text-align: center; margin: 12px 0 14px;">
+            ${isDp ? `
+            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 22px; background: #eff6ff; border: 1.5px solid #3b82f6; color: #1d4ed8; font-weight: 800; font-size: 12.5px; border-radius: 999px; letter-spacing: 0.5px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 12h8" />
+                </svg>
+                UANG MUKA (DP) DITERIMA
+            </div>
+            ` : `
             <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 22px; background: #ecfdf5; border: 1.5px solid #10b981; color: #047857; font-weight: 800; font-size: 12.5px; border-radius: 999px; letter-spacing: 0.5px;">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -68,6 +112,7 @@ export function createReceiptHTML(r) {
                 </svg>
                 LUNAS
             </div>
+            `}
         </div>
 
         ${r.proofImage ? `
@@ -272,11 +317,92 @@ export function printReceiptPDF(r) {
  * @returns {string}
  */
 export function createInvoiceHTML(inv) {
+    const isDp = inv.invoiceType === "dp";
+    const isDpRemaining = inv.invoiceType === "dp_remaining";
+    const totalSewa = Number(inv.totalSewa) || Number(inv.amount) || 0;
+
+    let subTitle = "Surat Tagihan Pembayaran Sewa Kost";
+    let badgeHTML = `
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 20px; background: #fffbeb; border: 1.5px solid #f59e0b; color: #b45309; font-weight: 800; font-size: 12px; border-radius: 999px; letter-spacing: 0.5px;">
+            MENUNGGU PEMBAYARAN
+        </div>
+    `;
+    let costBreakdownHTML = "";
+
+    if (isDp) {
+        subTitle = "Surat Tagihan Uang Muka (DP) Sewa Kost";
+        badgeHTML = `
+            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 20px; background: #eff6ff; border: 1.5px solid #3b82f6; color: #1d4ed8; font-weight: 800; font-size: 12px; border-radius: 999px; letter-spacing: 0.5px;">
+                TAGIHAN UANG MUKA (DP)
+            </div>
+        `;
+        costBreakdownHTML = `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #64748b;">Total Biaya Sewa Pokok</td>
+                <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(totalSewa)}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #2563eb; font-weight: 700;">Nominal DP yang Ditagihkan</td>
+                <td style="padding: 6px 0; font-weight: 800; color: #1d4ed8; text-align: right;">${formatCurrency(inv.dpAmount || inv.amount)}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #f59e0b; font-weight: 600;">Sisa Pelunasan Nanti</td>
+                <td style="padding: 6px 0; font-weight: 700; color: #d97706; text-align: right;">${formatCurrency(inv.remainingAmount || (totalSewa - (inv.dpAmount || inv.amount)))}</td>
+            </tr>
+            ${inv.extra > 0 ? `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #64748b;">${inv.extraNote || 'Biaya Tambahan'}</td>
+                <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(inv.extra)}</td>
+            </tr>
+            ` : ''}
+        `;
+    } else if (isDpRemaining) {
+        subTitle = "Surat Tagihan Sisa Pelunasan Sewa Kost";
+        badgeHTML = `
+            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 20px; background: #fffbeb; border: 1.5px solid #f59e0b; color: #b45309; font-weight: 800; font-size: 12px; border-radius: 999px; letter-spacing: 0.5px;">
+                TAGIHAN SISA PELUNASAN
+            </div>
+        `;
+        costBreakdownHTML = `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #64748b;">Total Biaya Sewa Pokok</td>
+                <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(totalSewa)}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #3b82f6;">DP yang Telah Diterima</td>
+                <td style="padding: 6px 0; font-weight: 600; color: #2563eb; text-align: right;">${formatCurrency(inv.dpPaid || 0)}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #d97706; font-weight: 700;">Sisa yang Harus Dilunasi</td>
+                <td style="padding: 6px 0; font-weight: 800; color: #b45309; text-align: right;">${formatCurrency(inv.amount)}</td>
+            </tr>
+            ${inv.extra > 0 ? `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #64748b;">${inv.extraNote || 'Biaya Tambahan'}</td>
+                <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(inv.extra)}</td>
+            </tr>
+            ` : ''}
+        `;
+    } else {
+        costBreakdownHTML = `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #64748b;">Biaya Sewa Pokok</td>
+                <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(inv.amount)}</td>
+            </tr>
+            ${inv.extra > 0 ? `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 6px 0; color: #64748b;">${inv.extraNote || 'Biaya Tambahan'}</td>
+                <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(inv.extra)}</td>
+            </tr>
+            ` : ''}
+        `;
+    }
+
     return `
         <div style="text-align: center; margin-bottom: 14px;">
             <img src="logo.jpg" alt="Moka Kost" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; margin-bottom: 6px; display: inline-block;">
             <div style="font-size: 19px; font-weight: 800; color: #a06a3a; letter-spacing: -0.3px; line-height: 1.2;">MOKA KOST</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Surat Tagihan Pembayaran Sewa Kost</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${subTitle}</div>
             <div style="display: inline-block; font-family: monospace; font-size: 11px; background: #f8fafc; color: #475569; padding: 3px 12px; border-radius: 20px; margin-top: 6px; font-weight: 700; border: 1px solid #e2e8f0;">
                 No. Tagihan: #${inv.invoiceId}
             </div>
@@ -313,30 +439,23 @@ export function createInvoiceHTML(inv) {
 
         <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.5;">
             <tbody>
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 6px 0; color: #64748b;">Biaya Sewa Pokok</td>
-                    <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(inv.amount)}</td>
-                </tr>
-                ${inv.extra > 0 ? `
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 6px 0; color: #64748b;">${inv.extraNote || 'Biaya Tambahan'}</td>
-                    <td style="padding: 6px 0; font-weight: 600; color: #0f172a; text-align: right;">${formatCurrency(inv.extra)}</td>
-                </tr>
-                ` : ''}
+                ${costBreakdownHTML}
             </tbody>
         </table>
 
         <div style="border-top: 1.5px dashed #cbd5e1; margin: 14px 0;"></div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0 8px;">
-            <span style="font-size: 13.5px; font-weight: 700; color: #1e293b;">Total Tagihan</span>
-            <span style="font-size: 18px; font-weight: 800; color: #a06a3a;">${formatCurrency(inv.total)}</span>
+            <span style="font-size: 13.5px; font-weight: 700; color: #1e293b;">
+                ${isDp ? 'Total Uang Muka (DP)' : isDpRemaining ? 'Total Sisa Pelunasan' : 'Total Tagihan'}
+            </span>
+            <span style="font-size: 18px; font-weight: 800; color: ${isDp ? '#2563eb' : isDpRemaining ? '#d97706' : '#a06a3a'};">
+                ${formatCurrency(inv.total)}
+            </span>
         </div>
 
         <div style="text-align: center; margin: 12px 0 14px;">
-            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 20px; background: #fffbeb; border: 1.5px solid #f59e0b; color: #b45309; font-weight: 800; font-size: 12px; border-radius: 999px; letter-spacing: 0.5px;">
-                MENUNGGU PEMBAYARAN
-            </div>
+            ${badgeHTML}
         </div>
 
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; font-size: 11.5px; color: #334155; line-height: 1.6; margin-top: 10px; text-align: left;">

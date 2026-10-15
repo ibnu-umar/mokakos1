@@ -31,15 +31,16 @@ export function openWhatsAppModal({ title, recipientName, phone, message, reside
     if (recipientEl) recipientEl.textContent = `Ke: ${recipientName} (${phone})`;
     if (textareaEl) textareaEl.value = message;
 
-    if (resident && resident.status === "paid") {
+    if (resident && (resident.status === "paid" || resident.status === "dp")) {
+        const isDp = resident.status === "dp";
         if (attBox) {
             attBox.style.display = "flex";
-            const filename = `Bukti_Pembayaran_${resident.name.replace(/\s+/g, '_')}_${resident.period.replace(/\s+/g, '_')}.png`;
+            const filename = `${isDp ? 'Bukti_DP' : 'Bukti_Pembayaran'}_${resident.name.replace(/\s+/g, '_')}_${resident.period.replace(/\s+/g, '_')}.png`;
             const filenameEl = document.getElementById("waAttachmentFilename");
             if (filenameEl) filenameEl.textContent = filename;
         }
         if (noticeText) {
-            noticeText.innerHTML = `🖼️ <strong>Lampiran Gambar:</strong> Berkas gambar struk resmi (PNG) akan otomatis diunduh saat Anda membuka WhatsApp untuk langsung dilampirkan ke penghuni.`;
+            noticeText.innerHTML = `🖼️ <strong>Lampiran Gambar:</strong> Berkas gambar struk resmi (${isDp ? 'Bukti DP' : 'Bukti Pembayaran'}) akan otomatis diunduh saat Anda membuka WhatsApp untuk langsung dilampirkan ke penghuni.`;
         }
         if (confirmBtn) {
             confirmBtn.innerHTML = `

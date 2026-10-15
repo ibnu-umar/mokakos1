@@ -36,6 +36,7 @@ export const REKENING = [
 //
 // STATUS:
 //   "paid"   → sudah lunas (isi paidDate & method)
+//   "dp"     → sudah bayar DP / uang muka (isi dpAmount, paidDate, method)
 //   "unpaid" → belum bayar (paidDate & method = null)
 export const PENGHUNI = [
     {
@@ -92,7 +93,7 @@ export const PENGHUNI = [
     },
     {
         id: "MK-2026-005",
-        name: "Eka",
+        name: "Ega Prastyo",
         room: "Kamar 05",
         phone: "0821-9999-0000",
         amount: 1800000,

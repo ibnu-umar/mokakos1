@@ -47,6 +47,33 @@ export const sendReceiptImageToWhatsApp = sendReceiptPdfToWhatsApp;
  * @returns {string}
  */
 export function getWhatsAppReminderText(r) {
+    const isDp = r.status === "dp";
+    const dpAmount = Number(r.dpAmount) || 0;
+    const sisa = Math.max(0, r.amount - dpAmount);
+
+    if (isDp) {
+        return `🏠 *PENGINGAT SISA PELUNASAN SEWA MOKA KOST*
+----------------------------------------
+Halo Sdr/i *${r.name}*,
+
+Mengingatkan untuk pelunasan sisa sewa kamar Moka Kost:
+
+👤 *Nama Penghuni:* ${r.name}
+🚪 *Kamar:* ${r.room}
+📞 *No. Telepon:* ${r.phone}
+📅 *Periode:* ${r.period}
+💰 *Total Biaya Sewa:* ${formatCurrency(r.amount)}
+💵 *DP Terbayar:* ${formatCurrency(dpAmount)}
+⚠️ *SISA PELUNASAN:* *${formatCurrency(sisa)}*
+⏰ *Jatuh Tempo:* ${formatDate(r.dueDate)}
+📊 *Status:* Belum Lunas (Sudah Bayar DP)
+
+💳 *Rekening Pembayaran Pelunasan:*
+${rekeningWA()}
+
+Mohon konfirmasi dan kirimkan bukti transfer pelunasan setelah melakukan pembayaran. Terima kasih banyak! 🙏✨`;
+    }
+
     return `🏠 *PENGINGAT TAGIHAN MOKA KOST*
 ----------------------------------------
 Halo Sdr/i *${r.name}*,
@@ -68,14 +95,43 @@ Mohon konfirmasi dan kirimkan bukti transfer setelah melakukan pembayaran. Terim
 }
 
 /**
- * Generate formatted WhatsApp receipt message for paid residents
+ * Generate formatted WhatsApp receipt message for paid / DP residents
  * @param {Object} r - Resident object
  * @returns {string}
  */
 export function getWhatsAppReceiptText(r) {
+    const isDp = r.status === "dp" || r.type === "dp";
+    const totalSewa = Number(r.totalAmount) || Number(r.amount) || 0;
+    const dpPaid = isDp ? (Number(r.dpAmount) || Number(r.amount) || 0) : (Number(r.dpAmount) || 0);
+    const sisaTagihan = isDp ? Math.max(0, totalSewa - dpPaid) : 0;
+
+    if (isDp) {
+        return `💵 *BUKTI PEMBAYARAN UANG MUKA (DP) MOKA KOST*
+----------------------------------------
+No. Kuitansi: *#${r.receiptNo || r.id}*
+
+Terima kasih Sdr/i *${r.name}*,
+Pembayaran Uang Muka (DP) sewa kost Anda telah kami terima dengan rincian berikut:
+
+👤 *Nama Penghuni:* ${r.name}
+🚪 *Kamar:* ${r.room}
+📞 *No. Telepon:* ${r.phone}
+📅 *Periode:* ${r.period}
+⏰ *Tanggal Bayar:* ${formatDate(r.paidDate)}
+💳 *Metode Pembayaran:* ${r.method || 'Transfer BCA'}
+💰 *Total Biaya Sewa:* ${formatCurrency(totalSewa)}
+💵 *DP yang Diterima:* *${formatCurrency(dpPaid)}*
+⏳ *Sisa yang Harus Dilunasi:* *${formatCurrency(sisaTagihan)}*
+📊 *Status:* *UANG MUKA (DP) DITERIMA* 📋
+----------------------------------------
+Berikut terlampir gambar struk resmi Bukti Pembayaran DP.
+Alamat: ${KOST_INFO.alamat}
+Terima kasih! 🙏✨`;
+    }
+
     return `✅ *BUKTI PEMBAYARAN MOKA KOST*
 ----------------------------------------
-No. Kuitansi: *#${r.id}*
+No. Kuitansi: *#${r.receiptNo || r.id}*
 
 Terima kasih Sdr/i *${r.name}*,
 Pembayaran sewa kost Anda telah kami terima dengan rincian berikut:
@@ -100,8 +156,65 @@ Terima kasih dan semoga nyaman tinggal di ${KOST_INFO.nama}! 🙏✨`;
  * @returns {string}
  */
 export function getWhatsAppInvoiceText(inv) {
+    const isDp = inv.invoiceType === "dp";
+    const isDpRemaining = inv.invoiceType === "dp_remaining";
+    const totalSewa = Number(inv.totalSewa) || Number(inv.amount) || 0;
     let extraText = inv.extra > 0 ? `• ${inv.extraNote || 'Biaya Tambahan'}: ${formatCurrency(inv.extra)}\n` : '';
     let notesText = inv.notes ? `\n📝 *Catatan:* ${inv.notes}\n` : '';
+
+    if (isDp) {
+        return `🏠 *SURAT TAGIHAN UANG MUKA (DP) MOKA KOST*
+----------------------------------------
+No. Tagihan: *#${inv.invoiceId}*
+
+Kepada Yth. Sdr/i *${inv.name}*,
+Berikut rincian tagihan Uang Muka (DP) sewa kamar kost Anda:
+
+👤 *Nama Penghuni:* ${inv.name}
+🚪 *Kamar:* ${inv.room}
+📞 *No. Telepon:* ${inv.phone}
+📅 *Periode:* ${inv.period}
+⏰ *Jatuh Tempo:* ${formatDate(inv.dueDate)}
+
+💰 *Rincian Biaya:*
+• Total Sewa Pokok: ${formatCurrency(totalSewa)}
+• *Nominal DP Ditagihkan:* *${formatCurrency(inv.dpAmount || inv.amount)}*
+• Sisa Pelunasan Nanti: ${formatCurrency(inv.remainingAmount || (totalSewa - (inv.dpAmount || inv.amount)))}
+${extraText}----------------------------------------
+*TOTAL PEMBAYARAN DP: ${formatCurrency(inv.total)}*
+
+💳 *Rekening Pembayaran:*
+${rekeningWA()}
+${notesText}
+Mohon melakukan pembayaran DP sebelum tanggal jatuh tempo. Terima kasih! 🙏✨`;
+    }
+
+    if (isDpRemaining) {
+        return `🏠 *SURAT TAGIHAN SISA PELUNASAN SEWA MOKA KOST*
+----------------------------------------
+No. Tagihan: *#${inv.invoiceId}*
+
+Kepada Yth. Sdr/i *${inv.name}*,
+Berikut rincian tagihan sisa pelunasan sewa kamar kost Anda:
+
+👤 *Nama Penghuni:* ${inv.name}
+🚪 *Kamar:* ${inv.room}
+📞 *No. Telepon:* ${inv.phone}
+📅 *Periode:* ${inv.period}
+⏰ *Jatuh Tempo:* ${formatDate(inv.dueDate)}
+
+💰 *Rincian Biaya:*
+• Total Sewa Pokok: ${formatCurrency(totalSewa)}
+• DP yang Telah Masuk: ${formatCurrency(inv.dpPaid || 0)}
+• *Sisa yang Harus Dilunasi:* *${formatCurrency(inv.amount)}*
+${extraText}----------------------------------------
+*TOTAL PELUNASAN: ${formatCurrency(inv.total)}*
+
+💳 *Rekening Pembayaran:*
+${rekeningWA()}
+${notesText}
+Mohon melakukan pelunasan sebelum tanggal jatuh tempo. Terima kasih! 🙏✨`;
+    }
 
     return `🏠 *SURAT TAGIHAN SEWA MOKA KOST*
 ----------------------------------------

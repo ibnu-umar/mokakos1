@@ -133,9 +133,15 @@ export function renderPaymentHistory() {
                     </td>
                     <td class="history-col-amount">
                         <div class="history-amount-val">${formatCurrency(item.amount)}</div>
+                        ${item.status === 'dp' ? `
+                        <div class="history-status-dp">
+                            <span class="status-dot dot-dp"></span> DP
+                        </div>
+                        ` : `
                         <div class="history-status-paid">
                             <span class="status-dot dot-paid"></span> Lunas
                         </div>
+                        `}
                     </td>
                     <td class="history-col-method">
                         <span class="history-method-badge ${badgeClass}">
@@ -212,8 +218,13 @@ export function renderPaymentHistory() {
                             <span class="history-method-badge ${badgeClass}">${item.method || 'Transfer BCA'}</span>
                         </div>
                         <div class="hcm-row hcm-total-row">
-                            <span class="hcm-label">Total Dibayar</span>
-                            <span class="hcm-amount">${formatCurrency(item.amount)}</span>
+                            <span class="hcm-label">${item.status === 'dp' ? 'Total DP' : 'Total Dibayar'}</span>
+                            <div style="text-align: right;">
+                                <span class="hcm-amount">${formatCurrency(item.amount)}</span>
+                                <div style="font-size: 0.72rem; font-weight: 700; color: ${item.status === 'dp' ? 'var(--clr-info)' : 'var(--clr-success)'}; margin-top: 2px;">
+                                    ${item.status === 'dp' ? '● Bayar DP' : '● Lunas'}
+                                </div>
+                            </div>
                         </div>
                         ${item.notes ? `
                         <div class="hcm-notes">

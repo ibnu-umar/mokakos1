@@ -54,7 +54,11 @@ class Store {
                                 ...(savedItem.status === configItem.status ? {
                                     paidDate: configItem.paidDate,
                                     method: configItem.method
-                                } : {})
+                                } : {}),
+                                dpAmount: savedItem.dpAmount,
+                                dpPaidDate: savedItem.dpPaidDate,
+                                dpMethod: savedItem.dpMethod,
+                                dpRemaining: savedItem.dpRemaining
                             };
                         }
                         return savedItem;
@@ -371,7 +375,11 @@ class Store {
             paidDate: paymentData.paidDate || timestamp.split("T")[0],
             method: paymentData.method || "Transfer BCA",
             notes: paymentData.notes || paymentData.paymentNote || "",
-            status: "paid",
+            status: paymentData.status || "paid",
+            type: paymentData.type || "full",
+            dpAmount: paymentData.dpAmount || null,
+            remainingAmount: paymentData.remainingAmount || null,
+            totalAmount: paymentData.totalAmount || paymentData.amount || 0,
             avatar: paymentData.avatar || "MK",
             proofImage: paymentData.proofImage || null,
             proofUploadedAt: paymentData.proofUploadedAt || (paymentData.proofImage ? timestamp : null),
@@ -557,13 +565,18 @@ class Store {
     getStats() {
         const paid = this.residents.filter(r => r.status === "paid");
         const unpaid = this.residents.filter(r => r.status === "unpaid");
+        const dp = this.residents.filter(r => r.status === "dp");
         const withKtp = this.residents.filter(r => Boolean(r.ktpImage));
-        const totalRevenue = paid.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+        
+        // Total revenue counts full payments and down payments received
+        const totalRevenue = paid.reduce((sum, r) => sum + (Number(r.amount) || 0), 0) +
+                             dp.reduce((sum, r) => sum + (Number(r.dpAmount) || 0), 0);
 
         return {
             total: this.residents.length,
             paidCount: paid.length,
             unpaidCount: unpaid.length,
+            dpCount: dp.length,
             withKtpCount: withKtp.length,
             withoutKtpCount: this.residents.length - withKtp.length,
             totalRevenue

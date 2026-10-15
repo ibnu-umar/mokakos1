@@ -35,10 +35,11 @@ function animateValue(el, start, end, duration, formatter) {
 }
 
 export function updateStats() {
-    const { paidCount, unpaidCount, totalRevenue } = store.getStats();
+    const { paidCount, unpaidCount, dpCount, totalRevenue } = store.getStats();
 
     animateNumber("paidCount", paidCount);
     animateNumber("unpaidCount", unpaidCount);
+    animateNumber("dpCount", dpCount || 0);
 
     const revenueEl = document.getElementById("totalRevenue");
     if (revenueEl) {

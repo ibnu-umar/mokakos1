@@ -1,5 +1,5 @@
 /* =========================================
-   MOKA KOST — Invoice (Buat Tagihan) Modal Component
+   MOKA KOST — Invoice (Buat Tagihan & Tagihan DP) Modal Component
    ========================================= */
 
 import { store } from "../state/store.js";
@@ -9,6 +9,7 @@ import { shareInvoiceFileCommon } from "../services/whatsappService.js";
 import { KOST_INFO } from "../data/config.js";
 
 let currentInvoiceData = null;
+let activeInvoiceType = "full"; // 'full' | 'dp' | 'dp_remaining'
 
 function populateResidentSelect() {
     const select = document.getElementById("invoiceResident");
@@ -17,7 +18,8 @@ function populateResidentSelect() {
     store.getResidents("all").forEach(r => {
         const opt = document.createElement("option");
         opt.value = r.id;
-        opt.textContent = `${r.name}  •  ${r.room}`;
+        const statusBadge = r.status === "dp" ? " (DP)" : r.status === "paid" ? " (Lunas)" : "";
+        opt.textContent = `${r.name} • ${r.room}${statusBadge}`;
         select.appendChild(opt);
     });
 }
@@ -25,9 +27,92 @@ function populateResidentSelect() {
 function resetInvoiceForm() {
     const form = document.getElementById("invoiceForm");
     if (form) form.reset();
-    const totalPreview = document.getElementById("formTotalValue");
-    if (totalPreview) totalPreview.textContent = "Rp 0";
+    activeInvoiceType = "full";
     currentInvoiceData = null;
+
+    const dpRemainingBox = document.getElementById("invoiceDpRemainingBox");
+    const dpRemainingBtn = document.getElementById("btnInvoiceTypeDpRemaining");
+    const dpGroup = document.getElementById("invoiceDpGroup");
+    const dpRemainingInfo = document.getElementById("invoiceDpRemainingInfo");
+    const totalPreview = document.getElementById("formTotalValue");
+
+    if (dpRemainingBox) dpRemainingBox.style.display = "none";
+    if (dpRemainingBtn) dpRemainingBtn.style.display = "none";
+    if (dpGroup) dpGroup.style.display = "none";
+    if (dpRemainingInfo) dpRemainingInfo.style.display = "none";
+    if (totalPreview) totalPreview.textContent = "Rp 0";
+
+    updateInvoiceTypeButtons();
+}
+
+function updateInvoiceTypeButtons() {
+    const buttons = document.querySelectorAll(".invoice-type-btn");
+    buttons.forEach(btn => {
+        const type = btn.getAttribute("data-type");
+        if (type === activeInvoiceType) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+    });
+}
+
+function updateInvoiceFieldsVisibility() {
+    const select = document.getElementById("invoiceResident");
+    const r = select ? store.getResidentById(select.value) : null;
+
+    const dpGroup = document.getElementById("invoiceDpGroup");
+    const dpRemainingBox = document.getElementById("invoiceDpRemainingBox");
+    const dpRemainingBtn = document.getElementById("btnInvoiceTypeDpRemaining");
+    const dpRemainingInfo = document.getElementById("invoiceDpRemainingInfo");
+    const dpRemainingValue = document.getElementById("invoiceDpRemainingValue");
+    const dpAmountInput = document.getElementById("invoiceDpAmount");
+    const amountInput = document.getElementById("invoiceAmount");
+
+    if (r && r.status === "dp") {
+        if (dpRemainingBtn) dpRemainingBtn.style.display = "inline-flex";
+    } else {
+        if (dpRemainingBtn) dpRemainingBtn.style.display = "none";
+        if (activeInvoiceType === "dp_remaining") {
+            activeInvoiceType = "full";
+        }
+    }
+
+    updateInvoiceTypeButtons();
+
+    const baseAmount = parseInt(amountInput ? amountInput.value : 0) || 0;
+    const dpPaid = r && r.status === "dp" ? (Number(r.dpAmount) || 0) : 0;
+    const sisaExisting = Math.max(0, baseAmount - dpPaid);
+
+    if (activeInvoiceType === "dp") {
+        if (dpGroup) dpGroup.style.display = "block";
+        if (dpRemainingBox) dpRemainingBox.style.display = "none";
+
+        const dpVal = parseInt(dpAmountInput ? dpAmountInput.value : 0) || 0;
+        if (dpVal > 0) {
+            const sisaNanti = Math.max(0, baseAmount - dpVal);
+            if (dpRemainingInfo) dpRemainingInfo.style.display = "flex";
+            if (dpRemainingValue) dpRemainingValue.textContent = formatCurrency(sisaNanti);
+        } else {
+            if (dpRemainingInfo) dpRemainingInfo.style.display = "none";
+        }
+    } else if (activeInvoiceType === "dp_remaining") {
+        if (dpGroup) dpGroup.style.display = "none";
+        if (dpRemainingBox) dpRemainingBox.style.display = "block";
+
+        const totalSewaLabel = document.getElementById("invDpTotalSewaLabel");
+        const alreadyPaidLabel = document.getElementById("invDpAlreadyPaidLabel");
+        const remainingBillLabel = document.getElementById("invDpRemainingBillLabel");
+
+        if (totalSewaLabel) totalSewaLabel.textContent = formatCurrency(baseAmount);
+        if (alreadyPaidLabel) alreadyPaidLabel.textContent = formatCurrency(dpPaid);
+        if (remainingBillLabel) remainingBillLabel.textContent = formatCurrency(sisaExisting);
+    } else {
+        if (dpGroup) dpGroup.style.display = "none";
+        if (dpRemainingBox) dpRemainingBox.style.display = "none";
+    }
+
+    updateInvoiceTotal();
 }
 
 function goToInvoiceStep(step) {
@@ -58,12 +143,29 @@ function goToInvoiceStep(step) {
 }
 
 function updateInvoiceTotal() {
+    const select = document.getElementById("invoiceResident");
+    const r = select ? store.getResidentById(select.value) : null;
+
     const amountEl = document.getElementById("invoiceAmount");
     const extraEl = document.getElementById("invoiceExtra");
+    const dpAmountEl = document.getElementById("invoiceDpAmount");
+    const totalEl = document.getElementById("formTotalValue");
+
     const amount = parseInt(amountEl ? amountEl.value : 0) || 0;
     const extra = parseInt(extraEl ? extraEl.value : 0) || 0;
-    const total = amount + extra;
-    const totalEl = document.getElementById("formTotalValue");
+    let total = 0;
+
+    if (activeInvoiceType === "dp") {
+        const dpAmount = parseInt(dpAmountEl ? dpAmountEl.value : 0) || 0;
+        total = dpAmount + extra;
+    } else if (activeInvoiceType === "dp_remaining") {
+        const dpPaid = r && r.status === "dp" ? (Number(r.dpAmount) || 0) : 0;
+        const sisa = Math.max(0, amount - dpPaid);
+        total = sisa + extra;
+    } else {
+        total = amount + extra;
+    }
+
     if (totalEl) totalEl.textContent = formatCurrency(total);
 }
 
@@ -71,32 +173,44 @@ function onResidentSelect() {
     const select = document.getElementById("invoiceResident");
     if (!select) return;
     const r = store.getResidentById(select.value);
-    if (r) {
-        const amountEl = document.getElementById("invoiceAmount");
-        const periodEl = document.getElementById("invoicePeriod");
-        const dueDateEl = document.getElementById("invoiceDueDate");
+    if (!r) return;
 
-        if (amountEl) amountEl.value = r.amount;
+    const amountEl = document.getElementById("invoiceAmount");
+    const periodEl = document.getElementById("invoicePeriod");
+    const dueDateEl = document.getElementById("invoiceDueDate");
+    const dpAmountEl = document.getElementById("invoiceDpAmount");
 
-        if (periodEl && r.period) {
-            const hasOption = Array.from(periodEl.options).some(o => o.value === r.period);
-            if (hasOption) {
-                periodEl.value = r.period;
-            } else {
-                const opt = document.createElement("option");
-                opt.value = r.period;
-                opt.textContent = r.period;
-                periodEl.appendChild(opt);
-                periodEl.value = r.period;
-            }
+    if (amountEl) amountEl.value = r.amount;
+
+    if (periodEl && r.period) {
+        const hasOption = Array.from(periodEl.options).some(o => o.value === r.period);
+        if (hasOption) {
+            periodEl.value = r.period;
+        } else {
+            const opt = document.createElement("option");
+            opt.value = r.period;
+            opt.textContent = r.period;
+            periodEl.appendChild(opt);
+            periodEl.value = r.period;
         }
-
-        if (dueDateEl && r.dueDate) {
-            dueDateEl.value = r.dueDate;
-        }
-
-        updateInvoiceTotal();
     }
+
+    if (dueDateEl && r.dueDate) {
+        dueDateEl.value = r.dueDate;
+    }
+
+    if (r.status === "dp") {
+        activeInvoiceType = "dp_remaining";
+    } else {
+        if (activeInvoiceType === "dp_remaining") {
+            activeInvoiceType = "full";
+        }
+        if (dpAmountEl) {
+            dpAmountEl.placeholder = `Contoh: ${Math.round(r.amount / 2)}`;
+        }
+    }
+
+    updateInvoiceFieldsVisibility();
 }
 
 function generateInvoicePreview() {
@@ -111,29 +225,137 @@ function generateInvoicePreview() {
     const extraEl = document.getElementById("invoiceExtra");
     const extraNoteEl = document.getElementById("invoiceExtraNote");
     const notesEl = document.getElementById("invoiceNotes");
+    const dpAmountEl = document.getElementById("invoiceDpAmount");
 
     const period = periodEl ? periodEl.value : "";
     const dueDate = dueDateEl ? dueDateEl.value : "";
-    const amount = parseInt(amountEl ? amountEl.value : 0) || 0;
+    const totalSewaPokok = parseInt(amountEl ? amountEl.value : 0) || r.amount || 0;
     const extra = parseInt(extraEl ? extraEl.value : 0) || 0;
     const extraNote = extraNoteEl ? extraNoteEl.value.trim() : "";
     const notes = notesEl ? notesEl.value.trim() : "";
-    const total = amount + extra;
+
+    let billedAmount = totalSewaPokok;
+    let dpTarget = null;
+    let dpPaidExisting = null;
+    let remainingAmount = null;
+    let total = totalSewaPokok + extra;
+
+    if (activeInvoiceType === "dp") {
+        dpTarget = parseInt(dpAmountEl ? dpAmountEl.value : 0) || 0;
+        if (dpTarget <= 0) {
+            showToast("Nominal DP Belum Diisi", "Masukkan jumlah DP yang ingin ditagihkan.", "warning");
+            if (dpAmountEl) dpAmountEl.focus();
+            return false;
+        }
+        if (dpTarget >= totalSewaPokok) {
+            showToast("Nominal DP Terlalu Besar", "Nominal DP sama atau melebihi sewa pokok. Gunakan Tagihan Penuh.", "warning");
+            return false;
+        }
+        billedAmount = dpTarget;
+        remainingAmount = Math.max(0, totalSewaPokok - dpTarget);
+        total = dpTarget + extra;
+    } else if (activeInvoiceType === "dp_remaining") {
+        dpPaidExisting = Number(r.dpAmount) || 0;
+        billedAmount = Math.max(0, totalSewaPokok - dpPaidExisting);
+        remainingAmount = billedAmount;
+        total = billedAmount + extra;
+    }
+
     const invoiceId = `INV-${Date.now().toString(36).toUpperCase()}`;
 
     currentInvoiceData = {
-        invoiceId, residentId, name: r.name, room: r.room, phone: r.phone,
-        period, dueDate, amount, extra, extraNote, notes, total
+        invoiceId,
+        residentId,
+        name: r.name,
+        room: r.room,
+        phone: r.phone,
+        period,
+        dueDate,
+        amount: billedAmount,
+        totalSewa: totalSewaPokok,
+        dpAmount: dpTarget,
+        dpPaid: dpPaidExisting,
+        remainingAmount,
+        extra,
+        extraNote,
+        notes,
+        total,
+        invoiceType: activeInvoiceType
     };
 
     const preview = document.getElementById("invoicePreviewContent");
-    if (!preview) return;
+    if (!preview) return true;
+
+    let subTitle = "Surat Tagihan Pembayaran Kost";
+    let badgeHTML = `<div class="invoice-preview-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> MENUNGGU PEMBAYARAN</div>`;
+    let breakdownRows = "";
+
+    if (activeInvoiceType === "dp") {
+        subTitle = "Surat Tagihan Uang Muka (DP) Sewa Kost";
+        badgeHTML = `<div class="invoice-preview-badge invoice-preview-badge--dp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10" /><path d="M8 12h8" /></svg> TAGIHAN UANG MUKA (DP)</div>`;
+        breakdownRows = `
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label">Total Sewa Pokok</span>
+                <span class="invoice-preview-row-value">${formatCurrency(totalSewaPokok)}</span>
+            </div>
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label" style="color: #2563eb; font-weight: 700;">Nominal DP Ditagihkan</span>
+                <span class="invoice-preview-row-value" style="color: #2563eb; font-weight: 800;">${formatCurrency(dpTarget)}</span>
+            </div>
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label" style="color: #f59e0b;">Sisa Pelunasan Nanti</span>
+                <span class="invoice-preview-row-value" style="color: #d97706; font-weight: 700;">${formatCurrency(remainingAmount)}</span>
+            </div>
+            ${extra > 0 ? `
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label">${extraNote || 'Biaya Tambahan'}</span>
+                <span class="invoice-preview-row-value">${formatCurrency(extra)}</span>
+            </div>
+            ` : ''}
+        `;
+    } else if (activeInvoiceType === "dp_remaining") {
+        subTitle = "Surat Tagihan Sisa Pelunasan Sewa Kost";
+        badgeHTML = `<div class="invoice-preview-badge invoice-preview-badge--remaining"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> TAGIHAN SISA PELUNASAN</div>`;
+        breakdownRows = `
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label">Total Sewa Pokok</span>
+                <span class="invoice-preview-row-value">${formatCurrency(totalSewaPokok)}</span>
+            </div>
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label" style="color: #3b82f6;">DP yang Telah Diterima</span>
+                <span class="invoice-preview-row-value" style="color: #2563eb; font-weight: 600;">${formatCurrency(dpPaidExisting)}</span>
+            </div>
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label" style="color: #d97706; font-weight: 700;">Sisa yang Harus Dilunasi</span>
+                <span class="invoice-preview-row-value" style="color: #b45309; font-weight: 800;">${formatCurrency(billedAmount)}</span>
+            </div>
+            ${extra > 0 ? `
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label">${extraNote || 'Biaya Tambahan'}</span>
+                <span class="invoice-preview-row-value">${formatCurrency(extra)}</span>
+            </div>
+            ` : ''}
+        `;
+    } else {
+        breakdownRows = `
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label">Biaya Kost Pokok</span>
+                <span class="invoice-preview-row-value">${formatCurrency(totalSewaPokok)}</span>
+            </div>
+            ${extra > 0 ? `
+            <div class="invoice-preview-row">
+                <span class="invoice-preview-row-label">${extraNote || 'Biaya Tambahan'}</span>
+                <span class="invoice-preview-row-value">${formatCurrency(extra)}</span>
+            </div>
+            ` : ''}
+        `;
+    }
 
     preview.innerHTML = `
         <div class="invoice-preview-header">
             <img src="logo.jpg" alt="Moka Kost" class="invoice-preview-logo">
             <div class="invoice-preview-title">MOKA KOST</div>
-            <div class="invoice-preview-sub">Surat Tagihan Pembayaran Kost</div>
+            <div class="invoice-preview-sub">${subTitle}</div>
             <div class="invoice-preview-id">#${invoiceId}</div>
         </div>
 
@@ -156,37 +378,25 @@ function generateInvoicePreview() {
             </div>
             <div class="invoice-preview-row">
                 <span class="invoice-preview-row-label">Jatuh Tempo</span>
-                <span class="invoice-preview-row-value">${formatDate(dueDate)}</span>
+                <span class="invoice-preview-row-value" style="color: #dc2626; font-weight: 700;">${formatDate(dueDate)}</span>
             </div>
         </div>
 
         <hr class="invoice-preview-divider">
 
         <div class="invoice-preview-rows">
-            <div class="invoice-preview-row">
-                <span class="invoice-preview-row-label">Biaya Kost</span>
-                <span class="invoice-preview-row-value">${formatCurrency(amount)}</span>
-            </div>
-            ${extra > 0 ? `
-            <div class="invoice-preview-row">
-                <span class="invoice-preview-row-label">${extraNote || 'Biaya Tambahan'}</span>
-                <span class="invoice-preview-row-value">${formatCurrency(extra)}</span>
-            </div>
-            ` : ''}
+            ${breakdownRows}
         </div>
 
         <hr class="invoice-preview-divider">
 
         <div class="invoice-preview-total">
-            <span class="invoice-preview-total-label">Total Tagihan</span>
+            <span class="invoice-preview-total-label">${activeInvoiceType === 'dp' ? 'Total Uang Muka (DP)' : activeInvoiceType === 'dp_remaining' ? 'Total Sisa Pelunasan' : 'Total Tagihan'}</span>
             <span class="invoice-preview-total-value">${formatCurrency(total)}</span>
         </div>
 
         <div style="text-align:center;">
-            <div class="invoice-preview-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                MENUNGGU PEMBAYARAN
-            </div>
+            ${badgeHTML}
         </div>
 
         ${notes ? `
@@ -201,26 +411,51 @@ function generateInvoicePreview() {
             ${KOST_INFO.nama} — ${KOST_INFO.alamat}
         </div>
     `;
+
+    return true;
 }
 
 async function saveInvoice(shareWa = false) {
     if (!currentInvoiceData) return;
 
-    store.updateResident(currentInvoiceData.residentId, {
-        period: currentInvoiceData.period,
-        dueDate: currentInvoiceData.dueDate,
-        amount: currentInvoiceData.total,
-        status: "unpaid",
-        paidDate: null,
-        method: null
-    });
+    const res = store.getResidentById(currentInvoiceData.residentId);
+
+    if (currentInvoiceData.invoiceType === "dp_remaining") {
+        // If billing for remaining DP, preserve DP status and dpAmount
+        store.updateResident(currentInvoiceData.residentId, {
+            period: currentInvoiceData.period,
+            dueDate: currentInvoiceData.dueDate
+        });
+    } else if (currentInvoiceData.invoiceType === "dp") {
+        // If billing for DP, keep status unpaid (waiting for DP) but update period/dueDate
+        store.updateResident(currentInvoiceData.residentId, {
+            period: currentInvoiceData.period,
+            dueDate: currentInvoiceData.dueDate,
+            amount: currentInvoiceData.totalSewa
+        });
+    } else {
+        // Full new bill
+        store.updateResident(currentInvoiceData.residentId, {
+            period: currentInvoiceData.period,
+            dueDate: currentInvoiceData.dueDate,
+            amount: currentInvoiceData.total,
+            status: "unpaid",
+            paidDate: null,
+            method: null,
+            dpAmount: null,
+            dpPaidDate: null,
+            dpMethod: null,
+            dpRemaining: null
+        });
+    }
 
     const savedData = { ...currentInvoiceData };
     closeInvoiceModal();
 
+    const typeDesc = savedData.invoiceType === "dp" ? "Tagihan DP" : savedData.invoiceType === "dp_remaining" ? "Tagihan Sisa Pelunasan" : "Tagihan";
     showToast(
-        "Tagihan Berhasil Dibuat!",
-        `Tagihan untuk ${savedData.name} — ${savedData.period} telah disimpan.`
+        `${typeDesc} Berhasil Dibuat!`,
+        `${typeDesc} untuk ${savedData.name} (${formatCurrency(savedData.total)}) telah disimpan.`
     );
 
     if (shareWa) {
@@ -230,16 +465,22 @@ async function saveInvoice(shareWa = false) {
     currentInvoiceData = null;
 }
 
-export function openInvoiceModal(residentId = null) {
+export function openInvoiceModal(residentId = null, forcedType = null) {
     populateResidentSelect();
     resetInvoiceForm();
+
     if (residentId) {
         const select = document.getElementById("invoiceResident");
         if (select) {
             select.value = residentId;
             onResidentSelect();
+            if (forcedType) {
+                activeInvoiceType = forcedType;
+                updateInvoiceFieldsVisibility();
+            }
         }
     }
+
     goToInvoiceStep(1);
     const modal = document.getElementById("invoiceModal");
     if (modal) {
@@ -264,6 +505,8 @@ export function initInvoiceModal() {
     const select = document.getElementById("invoiceResident");
     const amountInput = document.getElementById("invoiceAmount");
     const extraInput = document.getElementById("invoiceExtra");
+    const dpAmountInput = document.getElementById("invoiceDpAmount");
+    const toggleGroup = document.getElementById("invoiceTypeToggle");
     const form = document.getElementById("invoiceForm");
     const backBtn = document.getElementById("btnBackToForm");
     const saveBtn = document.getElementById("btnSaveInvoice");
@@ -278,15 +521,35 @@ export function initInvoiceModal() {
         });
     }
 
+    if (toggleGroup) {
+        const buttons = toggleGroup.querySelectorAll(".invoice-type-btn");
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const type = btn.getAttribute("data-type");
+                activeInvoiceType = type;
+                updateInvoiceFieldsVisibility();
+            });
+        });
+    }
+
     if (select) select.addEventListener("change", onResidentSelect);
-    if (amountInput) amountInput.addEventListener("input", updateInvoiceTotal);
-    if (extraInput) extraInput.addEventListener("input", updateInvoiceTotal);
+    if (amountInput) amountInput.addEventListener("input", () => {
+        updateInvoiceFieldsVisibility();
+    });
+    if (dpAmountInput) dpAmountInput.addEventListener("input", () => {
+        updateInvoiceFieldsVisibility();
+    });
+    if (extraInput) extraInput.addEventListener("input", () => {
+        updateInvoiceTotal();
+    });
 
     if (form) {
         form.addEventListener("submit", (e) => {
             e.preventDefault();
-            generateInvoicePreview();
-            goToInvoiceStep(2);
+            const valid = generateInvoicePreview();
+            if (valid) {
+                goToInvoiceStep(2);
+            }
         });
     }
 
